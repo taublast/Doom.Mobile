@@ -58,9 +58,9 @@ Stack: [.NET MAUI](https://dotnet.microsoft.com/en-us/apps/maui), [SkiaSharp](ht
 
 ## To Do
 
-* Add UI for selecting one of the WADs when many are found.
+* UI for selecting one of the WADs when many are found.
 * Track selected weapon and highlight its number in custom UI.
-* Add music
+* MIDI music
 
 ## Ancestors
 
