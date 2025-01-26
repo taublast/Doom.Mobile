@@ -79,6 +79,9 @@ namespace ManagedDoom
             }
 
             text = (list[random.Next() % list.Count] + "\n\n" + DoomInfo.Strings.PRESSYN).Split('\n');
+
+            //auto-confirm for mobile
+            DoEvent(new DoomEvent(EventType.KeyDown, DoomKey.Y));
         }
 
         public override bool DoEvent(DoomEvent e)

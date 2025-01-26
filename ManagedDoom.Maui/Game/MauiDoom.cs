@@ -39,15 +39,6 @@ public class MauiDoom : MauiGame
 
             this.args = args;
 
-            _config = ConfigUtilities.GetConfig();
-            _content = new GameContent(args);
-
-            _config.video_screenwidth = Math.Clamp(_config.video_screenwidth, 320, 3200);
-            _config.video_screenheight = Math.Clamp(_config.video_screenheight, 200, 2000);
-
-            _config.video_fpsscale = Math.Clamp(_config.video_fpsscale, 1, 100); // 2
-
-            var targetFps = 35 * _config.video_fpsscale;  //todo apply to gameloop?
         }
         catch (Exception e)
         {
@@ -114,7 +105,9 @@ public class MauiDoom : MauiGame
 
             if (_doom.Update() == UpdateResult.Completed)
             {
-                //exit game
+                //exit game, we just reload to splash
+                Reload();
+                return;
             }
 
             frameFrac = frameFrac / 2;
@@ -127,6 +120,8 @@ public class MauiDoom : MauiGame
         var drawnChildrenCount = DrawViews(context, DrawingRect, scale);//GetDoomScale(DrawingRect, scale));
     }
 
+
+
     /// <summary>
     /// Setup everything
     /// </summary>
@@ -135,6 +130,18 @@ public class MauiDoom : MauiGame
     /// <param name="scale"></param>
     void Init(SkiaDrawingContext context, SKRect destination, float scale)
     {
+        frameCount = -1;
+
+        _config = ConfigUtilities.GetConfig();
+        _content = new GameContent(args);
+
+        _config.video_screenwidth = Math.Clamp(_config.video_screenwidth, 320, 3200);
+        _config.video_screenheight = Math.Clamp(_config.video_screenheight, 200, 2000);
+
+        _config.video_fpsscale = Math.Clamp(_config.video_fpsscale, 1, 100); // 2
+
+        var targetFps = 35 * _config.video_fpsscale;  //todo apply to gameloop?
+
         _video = new MauiVideo(_config, _content, context);
 
         if (!args.nosound.Present && !(args.nosfx.Present && args.nomusic.Present))
@@ -152,7 +159,7 @@ public class MauiDoom : MauiGame
             //}
         }
 
-        _input = new MauiUserInput(_config, !args.nomouse.Present, OnUiCommand);
+        _input ??= new MauiUserInput(_config, !args.nomouse.Present, OnUiCommand);
 
         _doom = new Doom(args, _config, _content, _video, _sound, _music, _input);
 
@@ -164,6 +171,12 @@ public class MauiDoom : MauiGame
 
         fpsScale = args.timedemo.Present ? 1 : _config.video_fpsscale; //2
         frameCount = -1;
+    }
+
+    void Reload()
+    {
+        StopLoop();
+        _initialized = false;
     }
 
     /// <summary>
