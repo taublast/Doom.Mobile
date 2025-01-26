@@ -68,4 +68,4 @@ Stack: [.NET MAUI](https://dotnet.microsoft.com/en-us/apps/maui), [SkiaSharp](ht
 
  ## License
 
-The [GPLv2 license](licenses/LICENSE_ManagedDoom.txt) inherited from ancestors.
+The [GPLv2 license](LICENSE.txt) inherited from ancestors.
