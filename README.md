@@ -4,11 +4,6 @@ A cross-platform DOOM game, play it on iOS, MacCatalyst, Android and Windows.
 
 Uses a modified C# Doom engine of [ManagedDoom](https://github.com/sinshu/managed-doom).
 
-__TODO before making repo PUBLIC:__ 
-* test adjust Plugin.Maui.Audio on all platforms and include as a custom nuget
-* remove WAD from resources
-* cleanup code
-
 ## Why Another .NET DOOM?
 
 * Cross-platform implementation for iOS, MacCatalyst, Android and Windows. 
