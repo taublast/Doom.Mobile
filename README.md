@@ -2,7 +2,7 @@
 
 A cross-platform DOOM game, play it on iOS, MacCatalyst, Android and Windows.
 
-Stack: [.NET MAUI](https://dotnet.microsoft.com/en-us/apps/maui), [SkiaSharp](https://github.com/mono/SkiaSharp), [DrawnUI](https://github.com/taublast/DrawnUi.Maui), [Plugin.Maui.Audio](https://github.com/jfversluis/Plugin.Maui.Audio).
+Uses a modified C# Doom engine of [ManagedDoom](https://github.com/sinshu/managed-doom).
 
 __TODO before making repo PUBLIC:__ 
 * test adjust Plugin.Maui.Audio on all platforms and include as a custom nuget
@@ -12,8 +12,8 @@ __TODO before making repo PUBLIC:__
 ## Why Another .NET DOOM?
 
 * Cross-platform implementation for iOS, MacCatalyst, Android and Windows. 
-* Use mobile touch gestures and additionally keyboard on desktop.
-* Added custom UI to select weapons on mobile, tap left-bottom corner to open.
+* Mobile touch gestures and additionally keyboard on desktop.
+* Custom UI to select weapons on mobile, tap left-bottom corner to open.
 * Multi-channel stereo sound working on all platforms.
 
 ## How To Play
@@ -45,7 +45,9 @@ You can find out more about this subject by googling one of this filenames.
 
 ## Behind The Scenes
 
-* C# Doom engine provided by the awesome [ManagedDoom](https://github.com/sinshu/managed-doom) project, some parts re-written for speed.
+Stack: [.NET MAUI](https://dotnet.microsoft.com/en-us/apps/maui), [SkiaSharp](https://github.com/mono/SkiaSharp), [DrawnUI](https://github.com/taublast/DrawnUi.Maui), [Plugin.Maui.Audio](https://github.com/jfversluis/Plugin.Maui.Audio).
+
+* Reusing modified C# Doom engine of [ManagedDoom](https://github.com/sinshu/managed-doom).
 * Video: hardware-accelerated SkiaSharp v3 rendering with DrawnUI for .NET MAUI engine.
 * Input: DrawnUI Canvas mobile-friendly touch gestures, full keyboard support for WIndows and MacCatalyst desktop versions.
 * Sound: customized `Plugin.Maui.Audio` provides a cross-platform multi-channel sound system.
@@ -61,9 +63,9 @@ You can find out more about this subject by googling one of this filenames.
 
 ## To Do
 
-* Add music
 * Add UI for selecting one of the WADs when many are found.
-* Track selected wepon and highlight its number in custom UI.
+* Track selected weapon and highlight its number in custom UI.
+* Add music
 
 ## Ancestors
 
