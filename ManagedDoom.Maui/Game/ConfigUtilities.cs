@@ -35,7 +35,7 @@ namespace ManagedDoom.Maui.Game
         /// Get file from bundle resources and extract it to appdata folder on device
         /// </summary>
         /// <param name="name"></param>
-        public static void InsureResourceExtracted(string name)
+        public static bool InsureResourceExtracted(string name)
         {
             lock (_lockFiles)
             {
@@ -46,15 +46,17 @@ namespace ManagedDoom.Maui.Game
                     if (!File.Exists(filenameDb))
                     {
                         using var stream = FileSystem.OpenAppPackageFileAsync(name).GetAwaiter().GetResult();
+                        if (stream == null)
+                            return false;
                         using (var memoryStream = new MemoryStream())
                         {
                             stream.CopyTo(memoryStream);
                             File.WriteAllBytes(filenameDb, memoryStream.ToArray());
-
                         }
 
                     }
                 }
+                return true;
             }
         }
 
@@ -75,21 +77,8 @@ namespace ManagedDoom.Maui.Game
             foreach (var name in iwadNames)
             {
                 var path = Path.Combine(exeDirectory, name);
-                if (File.Exists(path))
-                {
-                    InsureResourceExtracted(name);
+                if (InsureResourceExtracted(name))
                     return path;
-                }
-            }
-
-            var currentDirectory = Directory.GetCurrentDirectory();
-            foreach (var name in iwadNames)
-            {
-                var path = Path.Combine(currentDirectory, name);
-                if (File.Exists(path))
-                {
-                    return path;
-                }
             }
 
             throw new Exception("No IWAD was found!");
