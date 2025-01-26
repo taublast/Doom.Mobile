@@ -1,109 +1,74 @@
-# Managed Doom
+# DOOM Mobile
 
-![Doom II MAP01 screenshot](screenshots/doom2-map01.png)
+A cross-platform DOOM game, play it on iOS, MacCatalyst, Android and Windows.
 
-Managed Doom is a Doom source port written in C#. The entire code is manually translated from [Linux Doom](https://github.com/id-Software/DOOM) with some effort to make it natural C# code. Most functionalities necessary for single player game are implemented, and now it's in the playable state.
+Stack: [.NET MAUI](https://dotnet.microsoft.com/en-us/apps/maui), [SkiaSharp](https://github.com/mono/SkiaSharp), [DrawnUI](https://github.com/taublast/DrawnUi.Maui), [Plugin.Maui.Audio](https://github.com/jfversluis/Plugin.Maui.Audio).
 
-## Screenshots
+__TODO before making repo PUBLIC:__ 
+* test adjust Plugin.Maui.Audio on all platforms and include as a custom nuget
+* remove WAD from resources
+* cleanup code
 
-![Doom E1M1](screenshots/doom-e1m1.png)
+## Why Another .NET DOOM?
 
-![Doom II MAP11](screenshots/doom2-map11.png)
+* Cross-platform implementation for iOS, MacCatalyst, Android and Windows. 
+* Use mobile touch gestures and additionally keyboard on desktop.
+* Added custom UI to select weapons on mobile, tap left-bottom corner to open.
+* Multi-channel stereo sound working on all platforms.
 
-![Mr.DooM 30 MAP29](screenshots/mrdoom30-map29.png)
+## How To Play
 
-![Eternal Doom MAP29](screenshots/eternal-map29.png)
+### Setup
 
-![Requiem MAP13](screenshots/requiem-map13.png)
+While DOOM source code was openely released for non-profit use, it requires you to own a real copy of one of the DOOMs. 
+This project code would look for doom data `.wad` file placed inside `Resources/Raw` folder as `MauiAsset`. It looks for one of the following:
+```
+    "doom2.wad",
+    "plutonia.wad",
+    "tnt.wad",
+    "doom.wad",
+    "doom1.wad",
+    "freedoom2.wad",
+    "freedoom1.wad"
+```
+You can find out more about this subject by googling one of this filenames.
 
-![Zombies TC MAP01](screenshots/zombies-map01.png)
+### Controls
 
-![Batman Doom MAP27](screenshots/batman-map27.png)
+* Inside MENU panning replaces arrows keys, tap is ENTER.
+* ESC is 2-fingers tap or tap on the bottom area, for example, while playing you can tap on the bottom UI bar to open menu.
+* While playing panning replaces mouse, tap to FIRE and tap on your avatar USE, open doors etc. 
+* Switch weapons by tapping in the lower-left corner of the screen.
+* Open auto-map tapping in the right-top corner.
+* On desktop you can also use usual keyboard keys, defaults is FIRE with CONTROL, USE with SPACE..
+* Mouse on desktop is acting different from original DOOM as this version is touch-screens-friendly in the first place.
 
-## Demo video
+## Behind The Scenes
 
-https://www.youtube.com/watch?v=WIdIOzQFVq0  
+* C# Doom engine provided by the awesome [ManagedDoom](https://github.com/sinshu/managed-doom) project, some parts re-written for speed.
+* Video: hardware-accelerated SkiaSharp v3 rendering with DrawnUI for .NET MAUI engine.
+* Input: DrawnUI Canvas mobile-friendly touch gestures, full keyboard support for WIndows and MacCatalyst desktop versions.
+* Sound: customized `Plugin.Maui.Audio` provides a cross-platform multi-channel sound system.
+* Targets .NET 9.
 
-[![Demo video](https://img.youtube.com/vi/WIdIOzQFVq0/0.jpg)](https://www.youtube.com/watch?v=WIdIOzQFVq0)
+## Dev Notes
 
-## Todo
+* Projects are separated into shared code and MAUI implementation.
+* The original ManagedDoom Silk for Windows implementation was kept to serve as a development reference.
+* Android Debug version is laggy, Release tested to be fine on a slow device.
+* iOS simulator M-chip compatible.
+* Was developed and tested using doom2.wad.
 
-* __Software renderering__  
-    - [x] Front-to-back rendering using BSP
-    - [x] Wall texture mapping
-    - [x] Ceiling / floor texture mapping
-    - [x] Transparent textures
-    - [x] Diminishing lighting
-    - [x] Sky rendering
-    - [x] Sprite rendering
-    - [x] High resolution rendering
-    - [x] Optimization
-    - [x] Fuzz effect
-    - [x] Palette effects
+## To Do
 
-* __Game__
-    - [x] Collision detection
-    - [x] Player movement
-    - [x] Player attack
-    - [x] Monster AI
-    - [x] Doors and platforms
-    - [x] Animated textures
-    - [x] Demo compatibility
+* Add music
+* Add UI for selecting one of the WADs when many are found.
+* Track selected wepon and highlight its number in custom UI.
 
-* __Audio__
-    - [x] Sound
-    - [x] Music
+## Ancestors
 
-* __Misc__
-    - [x] Status bar
-    - [x] Automap
-    - [x] Title screen
-    - [x] Intermission screen
-    - [x] Menu screen
-    - [x] Save / load
-    - [x] Screen melt animation
-    - [x] Config
-    - [x] DeHackEd support
-    - [x] Frame interpolation
+[DOOM](https://github.com/id-Software/DOOM) -> [Linux Doom](https://github.com/id-Software/DOOM) -> [ManagedDoom](https://github.com/sinshu/managed-doom) -> this project.
 
-## License
+ ## License
 
-Managed Doom is distributed under the [GPLv2 license](licenses/LICENSE_ManagedDoom.txt).  
-Managed Doom uses the following libraries:
-
-* [Silk.NET](https://github.com/dotnet/Silk.NET) by the the Silk.NET team ([MIT License](licenses/LICENSE_SilkNET.txt))
-* [TrippyGL](https://github.com/SilkCommunity/TrippyGL) by Thomas Mizrahi ([MIT License](licenses/LICENSE_TrippyGL.txt))
-* [TimGM6mb](https://musescore.org/en/handbook/soundfonts-and-sfz-files#gm_soundfonts) by Tim Brechbill ([GPLv2 license](licenses/LICENSE_TimGM6mb.txt))
-* [DrippyAL](https://github.com/sinshu/DrippyAL) ([MIT License](licenses/LICENSE_DrippyAL.txt))
-* [MeltySynth](https://github.com/sinshu/meltysynth/) ([MIT license](licenses/LICENSE_MeltySynth.txt))
-
-Silk.NET uses the following native libraries:
-
-* [GLFW](https://www.glfw.org/) ([zlib/libpng license](licenses/LICENSE_GLFW.txt))
-* [OpenAL Soft](https://openal-soft.org/) ([LGPL license](licenses/LICENSE_OpenALSoft.txt))
-
-## References
-
-* __The Game Engine Black Book: DOOM by Fabien Sanglard__  
-If you want to understand the big picture of the rendering process in Doom, buy this one.  
-https://fabiensanglard.net/gebbdoom/index.html
-
-* __The Unofficial Doom Specs by Matthew S Fell__  
-http://www.gamers.org/dhs/helpdocs/dmsp1666.html
-
-* __MUS File Format Description by Vladimir Arnost__  
-https://www.doomworld.com/idgames/docs/editing/mus_form
-
-* __Chocolate Doom by Simon Howard__  
-Chocolate Doom is used as the reference of  compatibility tests.  
-https://github.com/chocolate-doom/chocolate-doom
-
-* __Crispy Doom by Fabian Greffrath__  
-The minimal HUD is imported from Crispy Doom.  
-https://github.com/fabiangreffrath/crispy-doom
-
-* __Doom Wiki__  
-https://doomwiki.org/wiki/Entryway
-
-* __Eternity Engine DeHackEd / BEX Reference__  
-http://eternity.mancubus.net/svn/trunk/docs/dehref.html
+The [GPLv2 license](licenses/LICENSE_ManagedDoom.txt) inherited from ancestors.
