@@ -170,7 +170,7 @@ public class MauiUserInput : IUserInput, IDisposable
     public MauiUserInput(Config config, bool useMouse, Func<UiCommand, bool> callbackInputForUi)
     {
         _config = config;
-        _desktop = DeviceInfo.Idiom != DeviceIdiom.Phone;
+        _desktop = !MauiProgram.IsMobile;
         _calbackUi = callbackInputForUi;
 
         weaponKeys = new bool[7];
@@ -586,12 +586,13 @@ public class MauiUserInput : IUserInput, IDisposable
     /// <param name="args"></param>
     /// <param name="apply"></param>
     /// <param name="scale"></param>
-    /// <param name="window"></param>
+    /// <param name="window">Area where this control is capturing gestures and is rendered</param>
+    /// <param name="viewport">This is the area where DOOM is rendered</param>
     /// <param name="frame"></param>
     /// <param name="doom"></param>
     /// <returns></returns>
     public bool ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply, float scale,
-        SKRect window, long frame, Config config)
+        SKRect window, SKRect viewport, long frame, Config config)
     {
         _window = window;
         _lastFrame = frame;
@@ -601,25 +602,12 @@ public class MauiUserInput : IUserInput, IDisposable
         var velocityX = (float)(args.Event.Distance.Velocity.X / scale);
         var velocityY = (float)(args.Event.Distance.Velocity.Y / scale);
 
-        if (!_desktop)
-        {
-            (velocityX, velocityY) = (-velocityY, velocityX);
-        }
-
-
         if (args.Type == TouchActionResult.Panning && args.Event.NumberOfTouches == 1)
         {
             _wasPanning = true;
             if (_doom.IsCapturingMouse)
             {
-                if (_desktop)
-                {
-                    _mouse.Position = new Vector2(_mouse.Position.X + args.Event.Distance.Delta.X, _mouse.Position.Y + args.Event.Distance.Delta.Y);
-                }
-                else
-                {
-                    _mouse.Position = new Vector2(_mouse.Position.X - args.Event.Distance.Delta.Y, _mouse.Position.Y + args.Event.Distance.Delta.X);
-                }
+                _mouse.Position = new Vector2(_mouse.Position.X + args.Event.Distance.Delta.X, _mouse.Position.Y + args.Event.Distance.Delta.Y);
             }
             else
             {
@@ -701,20 +689,45 @@ public class MauiUserInput : IUserInput, IDisposable
                 else
                 {
                     //todo check tab area. if tapped on the bottom menu bar act as ESC
-                    var rescale = (window.Height / scale) / 400.0f;
-                    scale *= rescale;
-                    var pxNavbarHeight = 65 * scale; //true for height 400, so rescale upon window size
-                    var navbarMiddle = window.Width / 2.0f;
-                    var avatarWidth = 60 * scale;
 
-                    if (args.Event.Location.Y > window.Bottom - pxNavbarHeight)
+                    var vScale = scale * viewport.Height / 400.0f;
+                    var hScale = scale * viewport.Width / 640f;
+
+                    var pxNavbarHeight = 65 * vScale; //true for height 400, so rescale upon window size
+
+                    var avatarWidth = 60 * hScale;
+
+                    bool IsInsideMenuBar(PointF point, SKRect rect, float menuHeight)
+                    {
+                        return point.Y > rect.Bottom - menuHeight;
+                    }
+
+                    bool IsInsideWeapons(PointF point, SKRect rect)
+                    {
+                        var right = rect.Left + 80 * hScale;
+                        return point.X < right;
+                    }
+
+                    bool IsInsideAvatar(PointF point, SKRect rect)
+                    {
+                        var navbarMiddle = window.Width / 2.0f;
+                        return point.X > navbarMiddle - avatarWidth / 2f &&
+                               point.X < navbarMiddle + avatarWidth / 2f;
+                    }
+
+                    bool IsInsideRightTopCorner(PointF point, SKRect rect)
+                    {
+                        return point.X > rect.Right - 100 * hScale && point.Y < rect.Top + pxNavbarHeight;
+                    }
+
+                    if (IsInsideMenuBar(args.Event.Location, viewport, pxNavbarHeight))
                     {
                         bool avatarClicked = false;
                         bool weaponClicked = false;
                         if (_doom.IsCapturingMouse)
                         {
                             //left-bottom corner
-                            if (args.Event.Location.X < window.Left + 100 * scale)
+                            if (IsInsideWeapons(args.Event.Location, viewport))
                             {
                                 if (_calbackUi.Invoke(UiCommand.SelectWeapon))
                                 {
@@ -722,7 +735,7 @@ public class MauiUserInput : IUserInput, IDisposable
                                 }
                             }
                             else
-                            if (args.Event.Location.X > navbarMiddle - avatarWidth / 2f && args.Event.Location.X < navbarMiddle + avatarWidth / 2f)
+                            if (IsInsideAvatar(args.Event.Location, viewport))
                             {
                                 //clicked avatar
                                 if (!_calbackUi.Invoke(UiCommand.Reset))
@@ -742,7 +755,7 @@ public class MauiUserInput : IUserInput, IDisposable
                         }
                     }
                     else
-                    if (args.Event.Location.X > window.Right - 100 * scale && args.Event.Location.Y < window.Top + pxNavbarHeight)
+                    if (IsInsideRightTopCorner(args.Event.Location, viewport))
                     {
                         //top-right corner
                         if (!_calbackUi.Invoke(UiCommand.Reset))
@@ -876,10 +889,10 @@ public class MauiUserInput : IUserInput, IDisposable
 
     private bool _moveDown;
     private bool _moveUp;
-    private readonly bool _desktop;
     private readonly Func<UiCommand, bool> _calbackUi;
     private long _lastFrame;
     private Doom _doom;
+    private bool _desktop;
 
     public class VirtualMouse
     {

@@ -10,6 +10,9 @@ namespace ManagedDoom.Maui
             try
             {
                 InitializeComponent();
+#if IOS
+                Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.SetPrefersHomeIndicatorAutoHidden(this, true);
+#endif
             }
             catch (Exception e)
             {

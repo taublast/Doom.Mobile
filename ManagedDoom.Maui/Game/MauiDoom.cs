@@ -110,7 +110,7 @@ public class MauiDoom : MauiGame
                 return;
             }
 
-            frameFrac = frameFrac / 2;
+            frameFrac /= 2;
         }
 
         //render doom
@@ -250,7 +250,7 @@ public class MauiDoom : MauiGame
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         var consumed = _input.ProcessGestures(args, apply,
-            RenderingScale, DrawingRect, frameCount, _config);
+            RenderingScale, DrawingRect, _video.Viewport, frameCount, _config);
         if (consumed)
             return this;
 

@@ -7,4 +7,7 @@ namespace ManagedDoom.Maui
     {
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
+
+
+
 }

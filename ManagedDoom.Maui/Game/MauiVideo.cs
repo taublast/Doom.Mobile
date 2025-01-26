@@ -19,12 +19,10 @@ public class MauiVideo : IVideo, IDisposable
 
     private int skiaWindowWidth;
     private int skiaWindowHeight;
-    private readonly SKRect _destination;
     private readonly float _scale;
     private int _textureWidth;
     private int _textureHeight;
     private readonly SKPaint _paint;
-    private readonly bool _desktop;
     private SKBitmap _texture;
 
     public MauiVideo(
@@ -58,9 +56,7 @@ public class MauiVideo : IVideo, IDisposable
                 IsAntialias = false
             };
 
-            _desktop = DeviceInfo.Idiom != DeviceIdiom.Phone;
-
-            if (_desktop)
+            if (!MauiProgram.IsMobile || DeviceInfo.Platform == DevicePlatform.iOS)
             {
                 _paint.FilterQuality = SKFilterQuality.High;
             }
@@ -73,224 +69,49 @@ public class MauiVideo : IVideo, IDisposable
         }
     }
 
-    public void RenderShader(SKCanvas canvas, SKRect _destination, Doom doom, Fixed frameFrac)
+    public void Render(SKCanvas canvas, SKRect destination, Doom doom, Fixed frameFrac)
     {
-        if (doom.Wiping)
-        {
-            renderer.RenderWipe(doom, textureData);
-            return;
-        }
-
-        renderer.RenderDoom(doom, frameFrac);
-        renderer.RenderMenu(doom);
-
-        var palette = renderer.palette;
-
-        var colors = palette[0];
-
-        if (doom.Game.World != null)
-        {
-            if (doom.State == DoomState.Game &&
-                doom.Game.State == GameState.Level)
-            {
-                colors = palette[Renderer.GetPaletteNumber(doom.Game.World.ConsolePlayer)];
-            }
-            else if (doom.State == DoomState.Opening &&
-                     doom.Opening.State == OpeningSequenceState.Demo &&
-                     doom.Opening.DemoGame.State == GameState.Level)
-            {
-                colors = palette[Renderer.GetPaletteNumber(doom.Opening.DemoGame.World.ConsolePlayer)];
-            }
-            else if (doom.State == DoomState.DemoPlayback &&
-                     doom.DemoPlayback.Game.State == GameState.Level)
-            {
-                colors = palette[Renderer.GetPaletteNumber(doom.DemoPlayback.Game.World.ConsolePlayer)];
-            }
-        }
-
-        if (_gpuEffect == null)
-        {
-            InitializeGpuShader();
-        }
-
-        var screenData = renderer.Screen.Data;
-        IntPtr pixPtr = _indexBitmap.GetPixels();
-        if (pixPtr != IntPtr.Zero)
-        {
-            Marshal.Copy(screenData, 0, pixPtr, screenData.Length);
-        }
-
-        // 6) Build the GPU shader with updated palette
-        //    a) The child image is made from _indexBitmap
-        var indexImage = SKImage.FromPixels(_indexBitmap.PeekPixels());
-        _gpuBuilder.Children.Add("indexShader", new(indexImage.ToShader()));
-
-        // b) The uniform array for colors[256]
-        int[] colorInts = System.Runtime.InteropServices
-            .MemoryMarshal
-            .Cast<uint, int>(colors)
-            .ToArray();
-        _gpuBuilder.Uniforms["colors"] = colorInts;
-
-        // c) The (width, height) of the 8-bit data
-        _gpuBuilder.Uniforms["iResolution"] =
-            new SKPoint(_indexBitmap.Width, _indexBitmap.Height);
-
-        // 7) Build final shader + set on the paint
-        using var finalShader = _gpuBuilder.Build();
-        _gpuPaint.Shader = finalShader;
-
-
-        float centerX = _destination.MidX;
-        float centerY = _destination.MidY;
-
-        canvas.Save();
-
-        SKRect destination;
-
-        if (_desktop)
-        {
-            canvas.Translate(centerX, centerY);
-            canvas.RotateDegrees(-90);
-
-            canvas.Scale(-1, 1);
-
-            canvas.Translate(-centerX, -centerY);
-
-            // Adjust X and Y when swapping width and height
-            float adjustedX = _destination.Left + (_destination.Width - _destination.Height) / 2;
-            float adjustedY = _destination.Top + (_destination.Height - _destination.Width) / 2;
-
-            destination = new SKRect(
-                adjustedX,
-                adjustedY,
-                adjustedX + _destination.Height,
-                adjustedY + _destination.Width);
-        }
-        else
-        {
-
-            // Get DOOM's aspect ratio
-            float textureWidth = _textureWidth;
-            float textureHeight = _textureHeight; // e 
-            float textureAspect = textureWidth / textureHeight;
-
-            // Get the destination (screen) aspect ratio
-            float screenWidth = _destination.Width;
-            float screenHeight = _destination.Height;
-            float screenAspect = screenWidth / screenHeight;
-
-            // Determine the best fit scale factor
-            float scaleFactor;
-            if (textureAspect > screenAspect)
-            {
-                // Fit to width
-                scaleFactor = screenWidth / textureWidth;
-            }
-            else
-            {
-                // Fit to height
-                scaleFactor = screenHeight / textureHeight;
-            }
-
-            // Calculate the new fitted size
-            float fittedWidth = textureWidth * scaleFactor;
-            float fittedHeight = textureHeight * scaleFactor;
-
-            // Center the fitted image
-            float fittedX = _destination.MidX - (fittedWidth / 2);
-            float fittedY = _destination.MidY - (fittedHeight / 2);
-
-            destination = new SKRect(
-                fittedX,
-                fittedY,
-                fittedX + fittedWidth,
-                fittedY + fittedHeight
-            );
-
-            // Apply only a vertical flip
-            canvas.Translate(centerX, centerY);
-            canvas.Scale(1, -1);
-            canvas.Translate(-centerX, -centerY);
-        }
-
-        canvas.DrawRect(destination, _gpuPaint);
-        //canvas.DrawBitmap(_texture, destination, _paint);
-
-        canvas.Restore();
-    }
-
-    public void Render(SKCanvas canvas, SKRect _destination, Doom doom, Fixed frameFrac)
-    {
-
-
-        //IntPtr ptr = _texture.GetPixels();
-        //if (ptr != IntPtr.Zero)
-        //{
-        //    System.Runtime.InteropServices.Marshal.Copy(textureData, 0, ptr, textureData.Length);
-        //}
 
         RenderUnsafer(doom, frameFrac); // _texture prepared
 
-        float centerX = _destination.MidX;
-        float centerY = _destination.MidY;
-
-        canvas.Save();
+        bool keepAspect = true;
 
         SKRect viewport;
+        float centerX = destination.MidX;
+        float centerY = destination.MidY;
 
-        if (_desktop)
+        if (keepAspect)
         {
-            canvas.Translate(centerX, centerY);
-            canvas.RotateDegrees(-90);
-
-            canvas.Scale(-1, 1);
-
-            canvas.Translate(-centerX, -centerY);
-
-            // Adjust X and Y when swapping width and height
-            float adjustedX = _destination.Left + (_destination.Width - _destination.Height) / 2;
-            float adjustedY = _destination.Top + (_destination.Height - _destination.Width) / 2;
-
-            viewport = new SKRect(
-                adjustedX,
-                adjustedY,
-                adjustedX + _destination.Height,
-                adjustedY + _destination.Width);
-        }
-        else
-        {
-
-            // Get DOOM's aspect ratio
+            // DOOM aspect ratio
             float textureWidth = _textureWidth;
-            float textureHeight = _textureHeight; // e 
+            float textureHeight = _textureHeight;
             float textureAspect = textureWidth / textureHeight;
 
-            // Get the destination (screen) aspect ratio
-            float screenWidth = _destination.Width;
-            float screenHeight = _destination.Height;
-            float screenAspect = screenWidth / screenHeight;
+            float screenWidth = destination.Width;
+            float screenHeight = destination.Height;
+            var screenAspect = screenHeight / screenWidth;
 
-            // Determine the best fit scale factor
-            float scaleFactor;
-            if (textureAspect > screenAspect)
+            float scaleFactor, fittedHeight, fittedWidth;
+
+            if (textureAspect < screenAspect)
             {
                 // Fit to width
+                float asp = textureHeight / textureWidth;
                 scaleFactor = screenWidth / textureWidth;
+                fittedWidth = textureWidth * scaleFactor / asp;
+                fittedHeight = textureHeight * scaleFactor / asp;
             }
             else
             {
                 // Fit to height
                 scaleFactor = screenHeight / textureHeight;
+                fittedWidth = textureWidth * scaleFactor / textureAspect;
+                fittedHeight = textureHeight * scaleFactor / textureAspect;
             }
 
-            // Calculate the new fitted size
-            float fittedWidth = textureWidth * scaleFactor;
-            float fittedHeight = textureHeight * scaleFactor;
-
-            // Center the fitted image
-            float fittedX = _destination.MidX - (fittedWidth / 2);
-            float fittedY = _destination.MidY - (fittedHeight / 2);
+            // center
+            float fittedX = destination.MidX - (fittedWidth / 2);
+            float fittedY = destination.MidY - (fittedHeight / 2);
 
             viewport = new SKRect(
                 fittedX,
@@ -299,11 +120,33 @@ public class MauiVideo : IVideo, IDisposable
                 fittedY + fittedHeight
             );
 
-            // Apply only a vertical flip
-            canvas.Translate(centerX, centerY);
-            canvas.Scale(1, -1);
-            canvas.Translate(-centerX, -centerY);
         }
+        else
+        {
+            float adjustedX = destination.Left + (destination.Width - destination.Height) / 2;
+            float adjustedY = destination.Top + (destination.Height - destination.Width) / 2;
+
+            viewport = new SKRect(
+                adjustedX,
+                adjustedY,
+                adjustedX + destination.Height,
+                adjustedY + destination.Width);
+        }
+
+        _viewportClipped = SkiaImage.CalculateDisplayRect(destination, viewport.Height, viewport.Width,
+            DrawImageAlignment.Center, DrawImageAlignment.Center);
+
+        canvas.Save();
+
+        canvas.Translate(centerX, centerY);
+
+        //mobile
+        //canvas.Scale(1, -1);
+
+        canvas.RotateDegrees(-90);
+        canvas.Scale(-1, 1);
+
+        canvas.Translate(-centerX, -centerY);
 
         if (_shader == null)
         {
@@ -320,97 +163,6 @@ public class MauiVideo : IVideo, IDisposable
 
         _paint.Shader = _gpuBuilder.Build();
         canvas.DrawRect(viewport, _paint);
-
-        canvas.Restore();
-    }
-
-
-    public void RenderBak(SKCanvas canvas, SKRect _destination, Doom doom, Fixed frameFrac)
-    {
-        //Render(doom, frameFrac);
-
-        //IntPtr ptr = _texture.GetPixels();
-        //if (ptr != IntPtr.Zero)
-        //{
-        //    System.Runtime.InteropServices.Marshal.Copy(textureData, 0, ptr, textureData.Length);
-        //}
-
-        RenderUnsafer(doom, frameFrac); // _texture prepared
-
-        float centerX = _destination.MidX;
-        float centerY = _destination.MidY;
-
-        canvas.Save();
-
-        SKRect destination;
-
-        if (_desktop)
-        {
-            canvas.Translate(centerX, centerY);
-            canvas.RotateDegrees(-90);
-
-            canvas.Scale(-1, 1);
-
-            canvas.Translate(-centerX, -centerY);
-
-            // Adjust X and Y when swapping width and height
-            float adjustedX = _destination.Left + (_destination.Width - _destination.Height) / 2;
-            float adjustedY = _destination.Top + (_destination.Height - _destination.Width) / 2;
-
-            destination = new SKRect(
-                adjustedX,
-                adjustedY,
-                adjustedX + _destination.Height,
-                adjustedY + _destination.Width);
-        }
-        else
-        {
-
-            // Get DOOM's aspect ratio
-            float textureWidth = _textureWidth;
-            float textureHeight = _textureHeight; // e 
-            float textureAspect = textureWidth / textureHeight;
-
-            // Get the destination (screen) aspect ratio
-            float screenWidth = _destination.Width;
-            float screenHeight = _destination.Height;
-            float screenAspect = screenWidth / screenHeight;
-
-            // Determine the best fit scale factor
-            float scaleFactor;
-            if (textureAspect > screenAspect)
-            {
-                // Fit to width
-                scaleFactor = screenWidth / textureWidth;
-            }
-            else
-            {
-                // Fit to height
-                scaleFactor = screenHeight / textureHeight;
-            }
-
-            // Calculate the new fitted size
-            float fittedWidth = textureWidth * scaleFactor;
-            float fittedHeight = textureHeight * scaleFactor;
-
-            // Center the fitted image
-            float fittedX = _destination.MidX - (fittedWidth / 2);
-            float fittedY = _destination.MidY - (fittedHeight / 2);
-
-            destination = new SKRect(
-                fittedX,
-                fittedY,
-                fittedX + fittedWidth,
-                fittedY + fittedHeight
-            );
-
-            // Apply only a vertical flip
-            canvas.Translate(centerX, centerY);
-            canvas.Scale(1, -1);
-            canvas.Translate(-centerX, -centerY);
-        }
-
-        canvas.DrawBitmap(_texture, destination, _paint);
 
         canvas.Restore();
     }
@@ -560,6 +312,12 @@ public class MauiVideo : IVideo, IDisposable
     private SKPaint _gpuPaint;
     private SKBitmap _indexBitmap;
     private SKRuntimeEffect _shader;
+    private SKRect _viewportClipped;
+
+    public SKRect Viewport
+    {
+        get => _viewportClipped;
+    }
 
     private void CreateShader()
     {

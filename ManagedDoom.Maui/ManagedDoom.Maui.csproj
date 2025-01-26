@@ -63,7 +63,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DrawnUi.Maui.Game" Version="1.3.60.1" />
+
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.22" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 		<!--<PackageReference Include="Plugin.Maui.Audio" Version="3.0.1" />-->
@@ -72,6 +72,7 @@
  
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\DrawnUi.Maui\src\Engine\Maui\DrawnUi.Maui.csproj" />
 	  <ProjectReference Include="..\..\Plugin.Maui.Audio\src\Plugin.Maui.Audio\Plugin.Maui.Audio.csproj" />
 	  <ProjectReference Include="..\ManagedDoom.Shared\ManagedDoom.Shared.csproj" />
 	</ItemGroup>

@@ -28,6 +28,15 @@ This project code would look for doom data `.wad` file placed inside `Resources/
 ```
 You can find out more about this subject by googling one of this filenames.
 
+### Performance
+
+To have max FPS:
+
+* On Android you need to compile a Release version and run it on real device. Tested to run smoothly on a slow device.
+* On Mac you can use a Debug version without debugging (important).
+* On iOS both for simulator and real device you can use a Debug version without debugging. Notice a bug in Visual Studio for Windows that starts a debugging session even when you start without debug. Euther use a next version (preview) or drop connection with Mac to break session.
+* On Windows you can play a Debug version even when debugging.
+
 ### Controls
 
 * Inside MENU panning replaces arrows keys, tap is ENTER.

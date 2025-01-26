@@ -3,6 +3,7 @@ using Plugin.Maui.Audio;
 using System;
 using System.Numerics;
 using System.Runtime.ExceptionServices;
+using System.Threading.Channels;
 
 namespace ManagedDoom.Maui.Game
 {
@@ -29,12 +30,15 @@ namespace ManagedDoom.Maui.Game
 
         // Array to hold ChannelInfo for each channel managed by AudioMixer
         private ChannelInfo[] channelInfos;
+        private readonly bool _desktop;
 
         public MauiSound(Config config, GameContent content, IAudioManager audioManager)
         {
             try
             {
                 Console.Write("Initialize sound: ");
+
+                _desktop = !MauiProgram.IsMobile;
 
                 this.config = config;
 
@@ -72,8 +76,10 @@ namespace ManagedDoom.Maui.Game
                     }
                 }
 
-                // Initialize AudioMixer with the desired number of channels
                 soundMixer = new AudioMixer(audioManager, channelCount);
+
+                if (!_desktop)
+                    soundMixer.MapBalance(-1); //rotated right 90 degrees
 
                 // Initialize ChannelInfo for each channel
                 for (int i = 0; i < channelCount; i++)
@@ -190,6 +196,29 @@ namespace ManagedDoom.Maui.Game
             this.listener = listener;
         }
 
+        private float GetPitch(SfxType type, Sfx sfx)
+        {
+            if (random != null)
+            {
+                if (sfx == Sfx.ITEMUP || sfx == Sfx.TINK || sfx == Sfx.RADIO)
+                {
+                    return 1.0F;
+                }
+                else if (type == SfxType.Voice)
+                {
+                    return 1.0F + 0.075F * (random.Next() - 128) / 128;
+                }
+                else
+                {
+                    return 1.0F + 0.025F * (random.Next() - 128) / 128;
+                }
+            }
+            else
+            {
+                return 1.0F;
+            }
+        }
+
         public void Update()
         {
             var now = DateTime.Now;
@@ -238,50 +267,16 @@ namespace ManagedDoom.Maui.Game
 
                     // Set the audio source for the channel
                     soundMixer.SetSource(i, buffers[(int)info.Reserved]);
-
-                    // Determine if the sound is very close to the listener
-                    float x = (info.Source.X - listener.X).ToFloat();
-                    float y = (info.Source.Y - listener.Y).ToFloat();
-
-                    if (Math.Abs(x) < 16 && Math.Abs(y) < 16)
-                    {
-                        // Very close to the listener: centered panning
-                        var spatial = soundMixer.PositionInSpace(new Vector3(0, 0, -1), 0.01f * masterVolumeDecay * info.Volume, 0f);
-                        soundMixer.SetVolume(i, spatial.Volume);
-                        soundMixer.SetBalance(i, spatial.Balance);
-                    }
-                    else
-                    {
-                        // Calculate distance and angle relative to listener
-                        float dist = MathF.Sqrt(x * x + y * y);
-                        var angle = (float)(MathF.Atan2(y, x) - listener.Angle.ToRadian());
-
-                        // Create a directional vector based on the angle
-                        Vector3 direction = new Vector3(-MathF.Sin(angle), 0, -MathF.Cos(angle));
-
-                        // Calculate base balance using sine of the angle
-                        float baseBalance = MathF.Sin(angle);
-
-                        // Calculate distance attenuation
-                        float attenuation = soundMixer.GetDistanceDecay(dist);
-                        float baseVolume = 0.01f * masterVolumeDecay * attenuation * info.Volume;
-
-                        // Calculate spatial adjustments
-                        var spatial = soundMixer.PositionInSpace(direction, baseVolume, baseBalance);
-
-                        // Apply adjusted Volume and Balance
-                        soundMixer.SetVolume(i, spatial.Volume);
-                        soundMixer.SetBalance(i, spatial.Balance);
-                    }
-
-                    // Play the sound
+                    var channel = soundMixer.Channels[i];
+                    SetParam(channel, info);
+                    channel.Speed = GetPitch(info.Type, info.Reserved);
                     soundMixer.Play(i, buffers[(int)info.Reserved], loop: false);
                     info.Playing = info.Reserved;
                     info.Reserved = Sfx.NONE;
                 }
             }
 
-            // Handle UI channel separately
+            //UI channel
             if (uiReserved != Sfx.NONE)
             {
                 if (uiChannel.IsPlaying)
@@ -289,16 +284,8 @@ namespace ManagedDoom.Maui.Game
                     uiChannel.Stop();
                 }
 
-                // Simulate centered panning for UI sounds
-                float uiVolume = 0.01f * masterVolumeDecay * 100f; // Assuming UI volume is 100
-                float uiBalance = 0f;
-
-                var spatial = soundMixer.PositionInSpace(new Vector3(0, 0, -1), uiVolume, uiBalance);
-                soundMixer.SetVolume(channelCount - 1, spatial.Volume); // Assuming UI uses the last channel
-                soundMixer.SetBalance(channelCount - 1, spatial.Balance);
-
-                // Set the audio source for UI channel
-                soundMixer.SetSource(channelCount - 1, buffers[(int)uiReserved]);
+                uiChannel.Volume = masterVolumeDecay;
+                uiChannel.SetSource(buffers[(int)uiReserved].GetAudioStream());
                 soundMixer.Play(channelCount - 1, buffers[(int)uiReserved], loop: false);
                 uiReserved = Sfx.NONE;
             }
@@ -310,22 +297,14 @@ namespace ManagedDoom.Maui.Game
         /// Adjusts volume and stereo panning based on the channel information.
         /// Utilizes the Balance property for panning based on the source's position relative to the listener.
         /// </summary>
-        /// <param name="player">The audio player to adjust.</param>
+        /// <param name="sound">The audio player to adjust.</param>
         /// <param name="info">The channel information.</param>
-        private void SetParam(IAudioPlayer player, ChannelInfo info)
+        private void SetParam(IAudioPlayer sound, ChannelInfo info)
         {
             if (info.Type == SfxType.Diffuse)
             {
-                // “Global” or “ambient” type sound: centered panning
-                float baseVolume = 0.01f * masterVolumeDecay * info.Volume;
-                float baseBalance = 0f; // Centered
-
-                // Calculate spatial adjustments using AudioMixer
-                var spatial = soundMixer.PositionInSpace(new Vector3(0, 0, -1), baseVolume, baseBalance);
-
-                // Apply adjusted Volume and Balance
-                soundMixer.SetVolume(GetChannelIndex(player), spatial.Volume);
-                soundMixer.SetBalance(GetChannelIndex(player), spatial.Balance);
+                sound.Balance = 0;
+                sound.Volume = 0.01F * masterVolumeDecay * info.Volume);
             }
             else
             {
@@ -350,39 +329,22 @@ namespace ManagedDoom.Maui.Game
                 // Compute distance for attenuation
                 if (Math.Abs(x) < 16 && Math.Abs(y) < 16)
                 {
-                    // Very close to the listener: centered panning
-                    float baseVolume = 0.01f * masterVolumeDecay * info.Volume;
-                    float baseBalance = 0f; // Centered
-
-                    // Calculate spatial adjustments
-                    var spatial = soundMixer.PositionInSpace(new Vector3(0, 0, -1), baseVolume, baseBalance);
-
-                    // Apply adjusted Volume and Balance
-                    soundMixer.SetVolume(GetChannelIndex(player), spatial.Volume);
-                    soundMixer.SetBalance(GetChannelIndex(player), spatial.Balance);
+                    sound.Balance = 0;
+                    sound.Volume = 0.01F * masterVolumeDecay * info.Volume;
                 }
                 else
                 {
-                    // Calculate distance and angle relative to listener
                     float dist = MathF.Sqrt(x * x + y * y);
                     var angle = (float)(MathF.Atan2(y, x) - listener.Angle.ToRadian());
 
-                    // Create a directional vector based on the angle
                     Vector3 direction = new Vector3(-MathF.Sin(angle), 0, -MathF.Cos(angle));
-
-                    // Calculate base balance using sine of the angle
                     float baseBalance = MathF.Sin(angle);
-
-                    // Calculate distance attenuation
                     float attenuation = soundMixer.GetDistanceDecay(dist);
                     float baseVolume = 0.01f * masterVolumeDecay * attenuation * info.Volume;
-
-                    // Calculate spatial adjustments
                     var spatial = soundMixer.PositionInSpace(direction, baseVolume, baseBalance);
 
-                    // Apply adjusted Volume and Balance
-                    soundMixer.SetVolume(GetChannelIndex(player), spatial.Volume);
-                    soundMixer.SetBalance(GetChannelIndex(player), spatial.Balance);
+                    sound.Volume = spatial.Volume;
+                    sound.Balance = spatial.Balance;
                 }
             }
         }

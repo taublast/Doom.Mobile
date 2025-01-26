@@ -32,7 +32,7 @@
                 WidthRequest="57">
 
                 <draw:SkiaImage
-                    Aspect="Fit"
+                    Aspect="AspectFitFill"
                     HorizontalOptions="Fill"
                     Source="ui.png"
                     VerticalOptions="Fill" />
