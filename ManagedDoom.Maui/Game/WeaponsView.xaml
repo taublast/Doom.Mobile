@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<draw:SkiaLayout
+    x:Class="ManagedDoom.Maui.Game.WeaponsView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    x:Name="ThisControl"
+    HeightRequest="-1"
+    HorizontalOptions="Start"
+    Spacing="0"
+    Type="Column"
+    UseCache="GPU"
+    VerticalOptions="End">
+
+    <draw:SkiaLayout.ItemsSource>
+        <x:Array Type="{x:Type x:String}">
+            <x:String>7</x:String>
+            <x:String>6</x:String>
+            <x:String>5</x:String>
+            <x:String>4</x:String>
+            <x:String>3</x:String>
+            <x:String>2</x:String>
+        </x:Array>
+    </draw:SkiaLayout.ItemsSource>
+
+    <draw:SkiaLayout.ItemTemplate>
+        <DataTemplate x:DataType="{x:Type x:String}">
+            <draw:SkiaLayout
+                draw:AddGestures.CommandTapped="{Binding Source={x:Reference ThisControl}, Path=TappedCommand}"
+                HeightRequest="57"
+                UseCache="Image"
+                WidthRequest="57">
+
+                <draw:SkiaImage
+                    Aspect="Fit"
+                    HorizontalOptions="Fill"
+                    Source="ui.png"
+                    VerticalOptions="Fill" />
+
+                <draw:SkiaLabel
+                    DropShadowColor="#66000000"
+                    FontAttributes="Bold"
+                    FontFamily="FontGame"
+                    FontSize="32"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Opacity="0.75"
+                    Text="{Binding .}"
+                    TextColor="White"
+                    TranslationY="6"
+                    VerticalOptions="Center" />
+
+            </draw:SkiaLayout>
+        </DataTemplate>
+    </draw:SkiaLayout.ItemTemplate>
+
+</draw:SkiaLayout>

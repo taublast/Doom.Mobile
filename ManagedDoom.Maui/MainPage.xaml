@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<draw:DrawnUiBasePage
+    x:Class="ManagedDoom.Maui.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:app="clr-namespace:ManagedDoom.Maui"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:game="using:ManagedDoom.Maui.Game"
+    Title=".NET MAUI DOOM"
+    BackgroundColor="Black"
+    Shell.FlyoutBehavior="Disabled">
+
+    <draw:Canvas
+        x:Name="GameCanvas"
+        Gestures="Enabled"
+        HardwareAcceleration="Enabled"
+        HorizontalOptions="Fill"
+        UpdateMode="Constant"
+        VerticalOptions="Fill">
+
+        <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
+
+            <game:MauiDoom />
+
+            <draw:SkiaLabelFps
+                Margin="0,0,4,24"
+                BackgroundColor="DarkRed"
+                HorizontalOptions="End"
+                IsVisible="{x:Static app:MauiProgram.IsDebug}"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End"
+                ZIndex="100" />
+
+        </draw:SkiaLayout>
+    </draw:Canvas>
+
+</draw:DrawnUiBasePage>

@@ -1,0 +1,17 @@
+﻿uniform shader indexShader;   // 8-bit image
+uniform shader paletteShader; // 256×1 palette image
+uniform float2 iResolution;   // dimensions of indexShader
+
+half4 main(float2 fragCoord)
+{
+    // 1) read the index from the 8-bit child
+    float2 uv = fragCoord / iResolution;
+    half4 indexed = indexShader.eval(uv);
+    float idx = clamp(indexed.r * 255.0 + 0.5, 0.0, 255.0);
+
+    // 2) sample the palette at X=(idx+0.5)/256
+    float xCoord = (idx) / 256.0; 
+    half4 color  = paletteShader.eval(float2(xCoord, 0.5));
+
+    return color;
+}
