@@ -1,5 +1,9 @@
-To compile this you need to put a custom fork https://github.com/taublast/Plugin.Maui.Audio from at the same level then this cloned repo, in parallel.
-As doom is computing its walls on CPU do not try to debug this on mobile.. See performance notes below.
+To compile this you need to put a custom fork https://github.com/taublast/Plugin.Maui.Audio at the same level then this cloned repo, in parallel.
+
+/audio plugin  
+/doom.mobile
+
+As doom is computing its walls on CPU do not try to debug this on mobile.. See performance notes below.  
 Actually repo already contains the doom2 wad file included for a fast usage, until going public.
 
 # DOOM Mobile
