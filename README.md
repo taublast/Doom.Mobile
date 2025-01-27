@@ -39,9 +39,9 @@ To have max FPS:
 
 ### Controls
 
-* Inside MENU panning replaces arrows keys, tap is ENTER.
-* ESC is 2-fingers tap or tap on the bottom area, for example, while playing you can tap on the bottom UI bar to open menu.
-* While playing panning replaces mouse, tap to FIRE and tap on your avatar USE, open doors etc. 
+* Inside MENU panning replaces arrows keys.
+* ESC left-top screen screen corner. ENTER is everywhere but this corner when menu is open.
+* While playing panning replaces mouse, tap to FIRE and tap on your avatar to USE, open doors etc. 
 * Switch weapons by tapping in the lower-left corner of the screen.
 * Open auto-map tapping in the right-top corner.
 * On desktop you can also use usual keyboard keys, defaults is FIRE with CONTROL, USE with SPACE..

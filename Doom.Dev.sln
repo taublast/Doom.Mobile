@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedDoom.Silk", "ManagedDoom\ManagedDoom.Silk.csproj", "{0ADDF6FA-4AF5-4A8B-BA6F-260A6F70FDD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedDoomTest", "ManagedDoomTest\ManagedDoomTest.csproj", "{3C8EB699-FD61-4952-87AD-33A0044A0CB2}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedDoom.Maui", "ManagedDoom.Maui\ManagedDoom.Maui.csproj", "{298BCEE7-9882-4C67-90A8-E0B997312FD4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedDoom.Shared", "ManagedDoom.Shared\ManagedDoom.Shared.csproj", "{EA9720A8-3081-47A2-BC5A-8106CD7D608C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.Audio", "..\Plugin.Maui.Audio\src\Plugin.Maui.Audio\Plugin.Maui.Audio.csproj", "{5BCD8754-972F-4597-90C9-4F3A6790CD8D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dev", "Dev", "{8B86C3CA-3A82-409E-B3D1-2C5CE205AD44}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{594DD4E1-3404-4383-B554-7474931FDE71}"
 EndProject
@@ -22,6 +28,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0ADDF6FA-4AF5-4A8B-BA6F-260A6F70FDD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ADDF6FA-4AF5-4A8B-BA6F-260A6F70FDD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ADDF6FA-4AF5-4A8B-BA6F-260A6F70FDD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ADDF6FA-4AF5-4A8B-BA6F-260A6F70FDD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C8EB699-FD61-4952-87AD-33A0044A0CB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C8EB699-FD61-4952-87AD-33A0044A0CB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C8EB699-FD61-4952-87AD-33A0044A0CB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C8EB699-FD61-4952-87AD-33A0044A0CB2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{298BCEE7-9882-4C67-90A8-E0B997312FD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{298BCEE7-9882-4C67-90A8-E0B997312FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{298BCEE7-9882-4C67-90A8-E0B997312FD4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -41,8 +55,11 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{0ADDF6FA-4AF5-4A8B-BA6F-260A6F70FDD9} = {8B86C3CA-3A82-409E-B3D1-2C5CE205AD44}
+		{3C8EB699-FD61-4952-87AD-33A0044A0CB2} = {8B86C3CA-3A82-409E-B3D1-2C5CE205AD44}
 		{298BCEE7-9882-4C67-90A8-E0B997312FD4} = {594DD4E1-3404-4383-B554-7474931FDE71}
 		{EA9720A8-3081-47A2-BC5A-8106CD7D608C} = {594DD4E1-3404-4383-B554-7474931FDE71}
+		{5BCD8754-972F-4597-90C9-4F3A6790CD8D} = {8B86C3CA-3A82-409E-B3D1-2C5CE205AD44}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2EA5D015-FB83-4E41-A368-1D8DC542CA03}

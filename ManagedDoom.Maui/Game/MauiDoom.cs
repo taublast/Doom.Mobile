@@ -159,7 +159,7 @@ public class MauiDoom : MauiGame
             //}
         }
 
-        _input ??= new MauiUserInput(_config, !args.nomouse.Present, OnUiCommand);
+        _input = new MauiUserInput(_config, !args.nomouse.Present, OnUiCommand);
 
         _doom = new Doom(args, _config, _content, _video, _sound, _music, _input);
 

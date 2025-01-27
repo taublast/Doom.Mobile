@@ -31,10 +31,24 @@ public class MauiUserInput : IUserInput, IDisposable
         if (type == EventType.KeyDown)
             pressed = currentTime;
 
+        var needTrigger = true;
+        //if (Pressed.TryGetValue(doomKey, out var set))
+        //{
+        //    if (set.IsEmpty)
+        //        needTrigger = false;
+        //}
+
         Pressed[doomKey] = pressed;
 
-        doom.PostEvent(new DoomEvent(type, doomKey));
-        //Trace.WriteLine($"[{type}] {doomKey}");
+        if (needTrigger)
+        {
+            Debug.WriteLine($"[EVENT] {type} {doomKey} at {Pressed[doomKey].Frame}");
+            doom.PostEvent(new DoomEvent(type, doomKey));
+        }
+        else
+        {
+            Debug.WriteLine($"[SKIPPED EVENT] {type} {doomKey}");
+        }
     }
 
     public static DoomKey KeyToDoom(MauiKey silkKey)
@@ -462,6 +476,7 @@ public class MauiUserInput : IUserInput, IDisposable
         {
             //_mouse.Cursor.CursorMode = CursorMode.Normal;
             _mouse.Position = new Vector2(_window.Size.Width - 10, _window.Size.Height - 10);
+            Debug.WriteLine($"PAN RESET {_mouse.Position.X} {_mouse.Position.Y}");
             mouseGrabbed = false;
         }
     }
@@ -580,6 +595,13 @@ public class MauiUserInput : IUserInput, IDisposable
         _doom = doom;
     }
 
+    private int panningFingers;
+
+    /// <summary>
+    /// Fixing error in gestures nuget TODO fix there
+    /// </summary>
+    private PointF _panningStartedAt;
+
     /// <summary>
     /// Beware this can be invoked several times per frame.
     /// </summary>
@@ -597,17 +619,43 @@ public class MauiUserInput : IUserInput, IDisposable
         _window = window;
         _lastFrame = frame;
 
+        if (_calbackUi == null)
+            return false;
+
         var currentTime = new EventTimestamp(frame);
 
         var velocityX = (float)(args.Event.Distance.Velocity.X / scale);
         var velocityY = (float)(args.Event.Distance.Velocity.Y / scale);
 
-        if (args.Type == TouchActionResult.Panning && args.Event.NumberOfTouches == 1)
+        //Debug.WriteLine($"{args.Type} {args.Event.NumberOfTouches} {args.Event.Location.X}");
+
+        if (args.Type == TouchActionResult.Panning)
         {
+            if (args.Event.NumberOfTouches > 1)
+            {
+                panningFingers = args.Event.NumberOfTouches;
+                return true;
+            }
+            else
+            {
+                if (panningFingers > 1)
+                {
+                    panningFingers = 1;
+                    return true;
+                }
+            }
+
+            panningFingers = 1;
             _wasPanning = true;
+
+            var distance = new PointF(args.Event.Location.X - _panningStartedAt.X,
+                 args.Event.Location.Y - _panningStartedAt.Y);
+            _panningStartedAt = args.Event.Location;
+
             if (_doom.IsCapturingMouse)
             {
-                _mouse.Position = new Vector2(_mouse.Position.X + args.Event.Distance.Delta.X, _mouse.Position.Y + args.Event.Distance.Delta.Y);
+                //Debug.WriteLine($"PAN ++ {distance.X} {distance.Y}");
+                _mouse.Position = new Vector2(_mouse.Position.X + distance.X, _mouse.Position.Y + distance.Y);
             }
             else
             {
@@ -642,92 +690,100 @@ public class MauiUserInput : IUserInput, IDisposable
 
         if (args.Type == TouchActionResult.Down)
         {
+            panningFingers = 0;
             _lastDown = args.Event.Location;
             _wasPanning = false;
             _isPressed = true;
+            _lastDownTime = currentTime.Timestamp;
 
-            if (args.Event.NumberOfTouches == 2) // two-finger tap to USE or ESC in MENU
+            if (args.Event.NumberOfTouches == 1)
             {
-                if (_doom.IsCapturingMouse)
-                {
-                    _pressedUse = currentTime;
-                }
-                else
-                {
-                    SetKeyStatus(EventType.KeyDown, DoomKey.Escape, _doom, currentTime);
-                }
-                return true;
+                _panningStartedAt = args.Event.Location;
             }
+
+            //if (args.Event.NumberOfTouches == 2) // two-finger tap to USE or ESC in MENU
+            //{
+            //    if (_doom.IsCapturingMouse)
+            //    {
+            //        _pressedUse = currentTime;
+            //    }
+            //    else
+            //    {
+            //        SetKeyStatus(EventType.KeyDown, DoomKey.Escape, _doom, currentTime);
+            //    }
+            //    return true;
+            //}
         }
 
-        if (args.Type == TouchActionResult.Up && args.Event.NumberOfTouches == 1)
+        if (args.Type == TouchActionResult.Up)
         {
+            panningFingers = 0;
             var moved = Math.Abs(_lastDown.X - args.Event.Location.X);
             if (_isPressed && moved < thresholdNotPanning * scale)
             {
-                if (currentTime.Timestamp - lastTapTime < doubleTapMs)
+                if (currentTime.Timestamp - _lastDownTime < 500) //tap detected
                 {
-                    totalTaps++;
-                    if (totalTaps == 2)
+                    if (_doom.Game.World is { AutoMap.Visible: true })
                     {
-                        //could use double tap for something
-                        totalTaps = 0;
+                        //close map
+                        SetKeyStatus(EventType.KeyDown, DoomKey.Tab, _doom, currentTime);
                     }
-                }
-                else
-                {
-                    totalTaps = 1;
-                }
-
-                lastTapTime = currentTime.Timestamp;
-
-                if (_doom.Game.World is { AutoMap.Visible: true })
-                {
-                    //close map
-                    SetKeyStatus(EventType.KeyDown, DoomKey.Tab, _doom, currentTime);
-                }
-                else
-                {
-                    //todo check tab area. if tapped on the bottom menu bar act as ESC
-
-                    var vScale = scale * viewport.Height / 400.0f;
-                    var hScale = scale * viewport.Width / 640f;
-
-                    var pxNavbarHeight = 65 * vScale; //true for height 400, so rescale upon window size
-
-                    var avatarWidth = 60 * hScale;
-
-                    bool IsInsideMenuBar(PointF point, SKRect rect, float menuHeight)
+                    else
                     {
-                        return point.Y > rect.Bottom - menuHeight;
-                    }
+                        var reScale = scale * viewport.Height / 400.0f;
+                        var pxHotspotHeight = 35 * reScale;
+                        var avatarWidth = 36 * reScale;
 
-                    bool IsInsideWeapons(PointF point, SKRect rect)
-                    {
-                        var right = rect.Left + 80 * hScale;
-                        return point.X < right;
-                    }
+                        bool IsInsideLeftBottomCorner(PointF point, SKRect rect)
+                        {
+                            return point.X < rect.Left + 100 * scale && point.Y > rect.Bottom - pxHotspotHeight;
+                        }
 
-                    bool IsInsideAvatar(PointF point, SKRect rect)
-                    {
-                        var navbarMiddle = window.Width / 2.0f;
-                        return point.X > navbarMiddle - avatarWidth / 2f &&
-                               point.X < navbarMiddle + avatarWidth / 2f;
-                    }
+                        bool IsInsideAvatar(PointF point, SKRect rect)
+                        {
+                            if (point.Y > rect.Bottom - pxHotspotHeight)
+                            {
+                                var navbarMiddle = window.Width / 2.0f;
+                                return point.X > navbarMiddle - avatarWidth / 2f &&
+                                       point.X < navbarMiddle + avatarWidth / 2f;
+                            }
+                            return false;
+                        }
 
-                    bool IsInsideRightTopCorner(PointF point, SKRect rect)
-                    {
-                        return point.X > rect.Right - 100 * hScale && point.Y < rect.Top + pxNavbarHeight;
-                    }
+                        bool IsInsideLeftTopCorner(PointF point, SKRect rect)
+                        {
+                            return point.X < rect.Left + 100 * scale && point.Y < rect.Top + pxHotspotHeight;
+                        }
 
-                    if (IsInsideMenuBar(args.Event.Location, viewport, pxNavbarHeight))
-                    {
+                        bool IsInsideRightTopCorner(PointF point, SKRect rect)
+                        {
+                            return point.X > rect.Right - 100 * scale && point.Y < rect.Top + pxHotspotHeight;
+                        }
+
                         bool avatarClicked = false;
                         bool weaponClicked = false;
-                        if (_doom.IsCapturingMouse)
+                        bool consumed = false;
+
+                        if (_doom.IsCapturingMouse) //playing
                         {
-                            //left-bottom corner
-                            if (IsInsideWeapons(args.Event.Location, viewport))
+                            if (IsInsideLeftTopCorner(args.Event.Location, viewport))
+                            {
+                                if (!_calbackUi.Invoke(UiCommand.Reset))
+                                {
+                                    SetKeyStatus(EventType.KeyDown, DoomKey.Escape, _doom, currentTime);
+                                }
+                            }
+                            else
+                            if (IsInsideRightTopCorner(args.Event.Location, viewport))
+                            {
+                                //top-right corner
+                                if (!_calbackUi.Invoke(UiCommand.Reset))
+                                {
+                                    SetKeyStatus(EventType.KeyDown, DoomKey.Tab, _doom, currentTime);
+                                }
+                            }
+                            else
+                            if (IsInsideLeftBottomCorner(args.Event.Location, viewport))
                             {
                                 if (_calbackUi.Invoke(UiCommand.SelectWeapon))
                                 {
@@ -744,37 +800,34 @@ public class MauiUserInput : IUserInput, IDisposable
                                     SetKeyStatus(EventType.KeyDown, config.key_use.Keys[0], _doom, currentTime);
                                 }
                             }
-                        }
-                        if (!avatarClicked && !weaponClicked)
-                        {
-                            //just clicked bottom UI bar
-                            if (!_calbackUi.Invoke(UiCommand.Reset))
+                            else
                             {
-                                SetKeyStatus(EventType.KeyDown, DoomKey.Escape, _doom, currentTime);
+                                if (!_calbackUi.Invoke(UiCommand.Reset))
+                                {
+                                    _pressedFire = currentTime;
+                                }
                             }
-                        }
-                    }
-                    else
-                    if (IsInsideRightTopCorner(args.Event.Location, viewport))
-                    {
-                        //top-right corner
-                        if (!_calbackUi.Invoke(UiCommand.Reset))
-                        {
-                            SetKeyStatus(EventType.KeyDown, DoomKey.Tab, _doom, currentTime);
-                        }
-                    }
-                    else
-                    {
-                        if (_doom.IsCapturingMouse)
-                        {
-                            if (!_calbackUi.Invoke(UiCommand.Reset))
-                            {
-                                _pressedFire = currentTime;
-                            }
+                            //if (!avatarClicked && !weaponClicked)
+                            //{
+                            //    //just clicked bottom UI bar
+                            //    if (!_calbackUi.Invoke(UiCommand.Reset))
+                            //    {
+                            //        SetKeyStatus(EventType.KeyDown, DoomKey.Escape, _doom, currentTime);
+                            //    }
+                            //}
+
                         }
                         else
                         {
-                            SetKeyStatus(EventType.KeyDown, DoomKey.Enter, _doom, currentTime);
+                            if (IsInsideLeftTopCorner(args.Event.Location, viewport))
+                            {
+                                if (!_calbackUi.Invoke(UiCommand.Reset))
+                                {
+                                    SetKeyStatus(EventType.KeyDown, DoomKey.Escape, _doom, currentTime);
+                                }
+                            }
+                            else
+                                SetKeyStatus(EventType.KeyDown, DoomKey.Enter, _doom, currentTime);
                         }
                     }
                 }
@@ -827,19 +880,19 @@ public class MauiUserInput : IUserInput, IDisposable
         AutoReleaseKey(DoomKey.Enter, doom, 50, currentTime);
         AutoReleaseKey(DoomKey.Escape, doom, 50, currentTime);
 
-        if (AutoReleaseKey(DoomKey.Up, doom, 300, currentTime))
+        if (AutoReleaseKey(DoomKey.Up, doom, 200, currentTime))
         {
             _moveUp = false;
         }
-        if (AutoReleaseKey(DoomKey.Down, doom, 300, currentTime))
+        if (AutoReleaseKey(DoomKey.Down, doom, 200, currentTime))
         {
             _moveDown = false;
         }
-        if (AutoReleaseKey(DoomKey.Left, doom, 300, currentTime))
+        if (AutoReleaseKey(DoomKey.Left, doom, 200, currentTime))
         {
             _moveLeft = false;
         }
-        if (AutoReleaseKey(DoomKey.Right, doom, 300, currentTime))
+        if (AutoReleaseKey(DoomKey.Right, doom, 200, currentTime))
         {
             _moveRight = false;
         }
@@ -870,7 +923,7 @@ public class MauiUserInput : IUserInput, IDisposable
         {
             if (pressed.Expired(now, timeMsAfterPressed))
             {
-                //Trace.WriteLine($"[{EventType.KeyUp}] {doomKey} at {Pressed[doomKey].Frame}");
+                Trace.WriteLine($"[EVENT] {EventType.KeyUp} {doomKey} at {Pressed[doomKey].Frame}");
                 Pressed[doomKey] = EventTimestamp.Empty;
                 doom.PostEvent(new DoomEvent(EventType.KeyUp, doomKey));
                 return true;
@@ -879,13 +932,9 @@ public class MauiUserInput : IUserInput, IDisposable
         return false;
     }
 
-    private long lastTapTime = 0;
+
     private const int doubleTapMs = 1000;
 
-    /// <summary>
-    /// How many times tapped with a short time delay to track double tap. 
-    /// </summary>
-    int totalTaps = 0;
 
     private bool _moveDown;
     private bool _moveUp;
@@ -893,6 +942,7 @@ public class MauiUserInput : IUserInput, IDisposable
     private long _lastFrame;
     private Doom _doom;
     private bool _desktop;
+    private long _lastDownTime;
 
     public class VirtualMouse
     {

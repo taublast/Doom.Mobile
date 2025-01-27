@@ -1,9 +1,7 @@
 ﻿using ManagedDoom.Audio;
 using Plugin.Maui.Audio;
-using System;
 using System.Numerics;
 using System.Runtime.ExceptionServices;
-using System.Threading.Channels;
 
 namespace ManagedDoom.Maui.Game
 {
@@ -78,8 +76,8 @@ namespace ManagedDoom.Maui.Game
 
                 soundMixer = new AudioMixer(audioManager, channelCount);
 
-                if (!_desktop)
-                    soundMixer.MapBalance(-1); //rotated right 90 degrees
+                //if (!_desktop)
+                //soundMixer.MapBalance(-1); //rotated right 90 degrees
 
                 // Initialize ChannelInfo for each channel
                 for (int i = 0; i < channelCount; i++)
@@ -222,7 +220,7 @@ namespace ManagedDoom.Maui.Game
         public void Update()
         {
             var now = DateTime.Now;
-            if ((now - lastUpdate).TotalSeconds < 0.01)
+            if ((now - lastUpdate).TotalSeconds < 0.02)
             {
                 // Don't update so frequently (for timedemo).
                 return;
@@ -304,7 +302,7 @@ namespace ManagedDoom.Maui.Game
             if (info.Type == SfxType.Diffuse)
             {
                 sound.Balance = 0;
-                sound.Volume = 0.01F * masterVolumeDecay * info.Volume);
+                sound.Volume = 0.01F * masterVolumeDecay * info.Volume;
             }
             else
             {
@@ -372,7 +370,6 @@ namespace ManagedDoom.Maui.Game
             {
                 return;
             }
-            // Reserve the UI channel (assuming UI uses the last channel)
             uiReserved = sfx;
         }
 

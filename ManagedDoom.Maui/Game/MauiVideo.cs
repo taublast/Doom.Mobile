@@ -1,6 +1,5 @@
 ﻿using DrawnUi.Maui.Draw;
 using DrawnUi.Maui.Infrastructure;
-using DrawnUi.Maui.Models;
 using ManagedDoom.Video;
 using SkiaSharp;
 using System.Runtime.InteropServices;
@@ -56,7 +55,7 @@ public class MauiVideo : IVideo, IDisposable
                 IsAntialias = false
             };
 
-            if (!MauiProgram.IsMobile || DeviceInfo.Platform == DevicePlatform.iOS)
+            if (!MauiProgram.IsMobile)
             {
                 _paint.FilterQuality = SKFilterQuality.High;
             }
@@ -71,8 +70,22 @@ public class MauiVideo : IVideo, IDisposable
 
     public void Render(SKCanvas canvas, SKRect destination, Doom doom, Fixed frameFrac)
     {
+        if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.DeviceType == DeviceType.Physical)
+        {
+            DrawScreen.Optimize = false;
+            Render(doom, frameFrac);
 
-        RenderUnsafer(doom, frameFrac); // _texture prepared
+            IntPtr pixPtr = _texture.GetPixels();
+            if (pixPtr != IntPtr.Zero)
+            {
+                Marshal.Copy(textureData, 0, pixPtr, textureData.Length);
+            }
+        }
+        else
+        {
+            RenderUnsafer(doom, frameFrac); // _texture prepared
+        }
+
 
         bool keepAspect = true;
 

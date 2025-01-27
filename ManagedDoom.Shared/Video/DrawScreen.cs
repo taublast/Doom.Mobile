@@ -13,11 +13,6 @@
 // GNU General Public License for more details.
 //
 
-
-
-using System;
-using System.Collections.Generic;
-
 namespace ManagedDoom.Video
 {
     public sealed partial class DrawScreen
@@ -25,6 +20,8 @@ namespace ManagedDoom.Video
         private int width;
         private int height;
         private byte[] data;
+
+        public static bool Optimize = true;
 
         private Patch[] chars;
 
@@ -49,8 +46,11 @@ namespace ManagedDoom.Video
         public void DrawPatch(Patch patch, int x, int y, int scale)
         {
 
-            DrawPatchParallelOptimized(patch, x, y, scale);
-            return;
+            if (Optimize)
+            {
+                DrawPatchParallelOptimized(patch, x, y, scale);
+                return;
+            }
 
             var drawX = x - scale * patch.LeftOffset;
             var drawY = y - scale * patch.TopOffset;

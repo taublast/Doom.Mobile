@@ -12,5 +12,50 @@ half4 main(float2 fragCoord)
 	 float2 inputCoord = (fragCoord - iOffset) * renderingScale;
 
 	return iImage1.eval(inputCoord);
-
 }
+
+/*
+
+//
+// Simple bilinear interpolation function.
+// We do four taps around the 'uv' coordinate, then
+// linearly interpolate in X, then Y.
+//
+half4 sampleBilinear(float2 uv)
+{
+    // Integer part (floored)
+    float2 baseCoord = floor(uv);
+    // Fractional part
+    float2 fracCoord = fract(uv);
+
+    // The four nearest sample positions
+    half4 c00 = iImage1.eval(baseCoord + float2(0.0, 0.0));
+    half4 c10 = iImage1.eval(baseCoord + float2(1.0, 0.0));
+    half4 c01 = iImage1.eval(baseCoord + float2(0.0, 1.0));
+    half4 c11 = iImage1.eval(baseCoord + float2(1.0, 1.0));
+
+    // Interpolate horizontally
+    half4 top    = mix(c00, c10, half(fracCoord.x));
+    half4 bottom = mix(c01, c11, half(fracCoord.x));
+
+    // Interpolate vertically
+    half4 finalColor = mix(top, bottom, half(fracCoord.y));
+
+    return finalColor;
+}
+
+half4 main(float2 fragCoord)
+{
+    // We'll compute a scale factor that transforms
+    // from the current fragment coordinate to the
+    // texture coordinate space
+    float2 renderingScale = iImageResolution / iResolution;
+
+    // Shift & scale the coordinates
+    float2 inputCoord = (fragCoord - iOffset) * renderingScale;
+
+    // Bilinear-sampled output
+    return sampleBilinear(inputCoord);
+}
+
+*/

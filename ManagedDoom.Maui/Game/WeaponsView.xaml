@@ -9,7 +9,7 @@
     HorizontalOptions="Start"
     Spacing="0"
     Type="Column"
-    UseCache="GPU"
+    UseCache="Image"
     VerticalOptions="End">
 
     <draw:SkiaLayout.ItemsSource>
@@ -32,6 +32,7 @@
                 WidthRequest="57">
 
                 <draw:SkiaImage
+                    LoadSourceOnFirstDraw="False"
                     Aspect="AspectFitFill"
                     HorizontalOptions="Fill"
                     Source="ui.png"

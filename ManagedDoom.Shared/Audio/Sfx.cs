@@ -13,10 +13,6 @@
 // GNU General Public License for more details.
 //
 
-
-
-using System;
-
 namespace ManagedDoom
 {
     public enum Sfx
