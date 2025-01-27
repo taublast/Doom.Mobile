@@ -4,6 +4,7 @@ To compile this you need to put a custom fork https://github.com/taublast/Plugin
 /doom.mobile
 
 As doom is computing its walls on CPU do not try to debug this on mobile.. See performance notes below.  
+The final texture is rendered using a shader so it can be modified in the future to do more work on GPU.  
 Actually repo already contains the doom2 wad file included for a fast usage, until going public.
 
 # DOOM Mobile
