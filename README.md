@@ -1,3 +1,7 @@
+To compile this you need to put a custom fork https://github.com/taublast/Plugin.Maui.Audio from at the same level then this cloned repo, in parallel.
+As doom is computing its walls on CPU do not try to debug this on mobile.. See performance notes below.
+Actually repo already contains the doom2 wad file included for a fast usage, until going public.
+
 # DOOM Mobile
 
 A cross-platform DOOM game, play it on iOS, MacCatalyst, Android and Windows.
@@ -32,9 +36,9 @@ You can find out more about this subject by googling one of this filenames.
 
 To have max FPS:
 
-* On Android you need to compile a Release version and run it on real device. Tested to run smoothly on a slow device.
+* On Android you need to compile a Release version and run it on a real device. Tested to run smoothly on a slow device.
 * On Mac you can use a Debug version without debugging (important).
-* On iOS both for simulator and real device you can use a Debug version without debugging. Notice a bug in Visual Studio for Windows that starts a debugging session even when you start without debug. Euther use a next version (preview) or drop connection with Mac to break session.
+* On iOS both for simulator and real device you can use a Debug version without debugging. Notice a bug in Visual Studio for Windows that starts a debugging session even when you start without debug. Either use a next version (preview) or drop the connection with Mac to break the debug session.
 * On Windows you can play a Debug version even when debugging.
 
 ### Controls
