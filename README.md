@@ -39,9 +39,9 @@ The final texture is rendered using a shader so it can be modified in the future
 ### Performance
 
 * On Windows you can play a Debug version even when debugging.
-* On Android to have playable fps you need to compile a Release and run it on a real device. Tested to run smoothly on a slow device.
+* On Android to have playable fps you need to compile a Release and run it on a real device, it runs smoothly even on a slow device.
 * On iOS both for simulator and real device are fine to play without debugging. Just notice a temporary bug in Visual Studio for Windows that still debugs your app even when started on iOS without debug. Use VS preview version or drop connection with Mac and re-run app.
-* On Mac (Catalyst) you can debug with low fps or play with 60 fps without debugging.
+* On Mac (Catalyst) when starting without debugging you can play even a Debug build.
 
 ### Controls
 
@@ -62,16 +62,14 @@ Stack: [.NET MAUI](https://dotnet.microsoft.com/en-us/apps/maui), [SkiaSharp](ht
 * Reusing modified C# Doom engine of [ManagedDoom](https://github.com/sinshu/managed-doom).
 * Video: hardware-accelerated SkiaSharp v3 rendering with DrawnUI for .NET MAUI engine.
 * Input: DrawnUI Canvas mobile-friendly touch gestures, full keyboard support for WIndows and MacCatalyst desktop versions.
-* Sound: customized `Plugin.Maui.Audio` provides a cross-platform multi-channel sound system.
+* Sound: [customized](https://github.com/taublast/Plugin.Maui.Audio) `Plugin.Maui.Audio` provides a cross-platform multi-channel sound system.
 * Targets .NET 9.
 
 ## Dev Notes
 
 * Projects are separated into shared code and MAUI implementation.
 * The original ManagedDoom Silk for Windows implementation was kept to serve as a development reference.
-* Android Debug version is laggy, Release tested to be fine on a slow device.
 * iOS simulator M-chip compatible.
-* Was developed and tested using doom2.wad.
 * iOS real device requires interpreter OFF to work with System.Threadig.Tasks.Parellel.
 
 ## To Do
