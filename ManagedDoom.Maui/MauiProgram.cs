@@ -1,5 +1,4 @@
-﻿//#define DEBUG_MOBILE //you don't need this to compile, it's for development purposes only, to simulate mobile on wndows
-
+﻿//#define DEBUG_MOBILE
 using DrawnUi.Maui.Draw;
 using Microsoft.Extensions.Logging;
 using Plugin.Maui.Audio;
@@ -16,7 +15,7 @@ namespace ManagedDoom.Maui
             builder
                 .UseMauiApp<App>()
                 .AddAudio()
-#if DEBUG_MOBILE
+#if DEBUG_MOBILE //don't need this to compile, it's for development to simulate mobile screen on desktop
                 .UseDrawnUi(new()
                 {
                     UseDesktopKeyboard = true,
