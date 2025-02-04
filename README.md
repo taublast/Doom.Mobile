@@ -19,13 +19,13 @@ Uses a modified C# Doom engine from [ManagedDoom](https://github.com/sinshu/mana
 While DOOM source code was openely released for non-profit use, it requires you to own a real copy of one of the DOOMs. 
 This project code would look for doom data `.wad` file placed inside `Resources/Raw` folder as `MauiAsset`. It looks for one of the following:
 ```
-    "freedoom2.wad",
-    "freedoom1.wad",
     "doom2.wad",
     "plutonia.wad",
     "tnt.wad",
     "doom.wad",
     "doom1.wad",
+    "freedoom2.wad",
+    "freedoom1.wad",
 ```
 You can find out more about this subject by googling one of this filenames.
 
@@ -33,7 +33,7 @@ This repo contains `freedoom2.wad` for a fast start, [free content under BSD lic
 
 You can set the `static bool KeepAspectRatio` inside `MauiProgram` to `false` if you want a more immersive experience.
 As doom is computing its walls on CPU do not try to debug this on mobile.. See performance notes below.  
-The final texture is rendered using a shader so it can be modified in the future to do more work on GPU.  
+The final texture is rendered using a shader so it can be modified in the future to do more work on GPU for the DOOM engine.  
 
 ### Performance
 
