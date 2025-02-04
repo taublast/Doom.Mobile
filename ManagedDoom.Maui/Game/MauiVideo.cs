@@ -70,7 +70,8 @@ public class MauiVideo : IVideo, IDisposable
 
     public void Render(SKCanvas canvas, SKRect destination, Doom doom, Fixed frameFrac)
     {
-        if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.DeviceType == DeviceType.Physical)
+        //if you have problems with System.Threadig.Tasks.Parellel
+        if (false) //fixed disabling interpreter for DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.DeviceType == DeviceType.Physical)
         {
             DrawScreen.Optimize = false;
             Render(doom, frameFrac);
@@ -83,7 +84,8 @@ public class MauiVideo : IVideo, IDisposable
         }
         else
         {
-            RenderUnsafer(doom, frameFrac); // _texture prepared
+            //use multi-threading
+            RenderUnsafer(doom, frameFrac); // _texture prepared inside
         }
 
 

@@ -3,9 +3,6 @@
 	<PropertyGroup>
 		<TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst;</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
-		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net9.0-tizen</TargetFrameworks> -->
-    <!--net9.0-maccatalyst-->
 
     <!-- Note for MacCatalyst:
 		The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
@@ -44,10 +41,13 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
-	  <ProvisioningType>manual</ProvisioningType>
-	  <CodesignKey>Apple Development: NIKOLAY KOVALSKIY (HW3HM3UBCN)</CodesignKey>
-	</PropertyGroup>
+  <!--fix crash when using System.Threadig.Tasks.Parellel-->
+  <PropertyGroup Condition=" '$(Platform)' == 'iPhone' ">
+    <MtouchInterpreter>-all,ManagedDoom.Maui.dll</MtouchInterpreter>
+  </PropertyGroup>
+
+  <!--personal provisioning for iPhone-->
+  <Import Project="../../Provisioning.targets" Condition="Exists('../../Provisioning.targets')" />
 
 	<ItemGroup>
 		<!-- App Icon -->
@@ -68,29 +68,28 @@
 	</ItemGroup>
 
 	<ItemGroup>
-
 		<PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.3.61.1-pre" />
-
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.22" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
-		<!--<PackageReference Include="Plugin.Maui.Audio" Version="3.0.1" />-->
- 
 	</ItemGroup>
- 
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Plugin.Maui.Audio\src\Plugin.Maui.Audio\Plugin.Maui.Audio.csproj" />
+  <!--can replace this with usual plugin if PR is merged-->
+  <ItemGroup>
+    <PackageReference Include="AppoMobi.Preview.Plugin.Maui.Audio" Version="3.0.2-pre2" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <ProjectReference Include="..\..\Plugin.Maui.Audio\src\Plugin.Maui.Audio\Plugin.Maui.Audio.csproj" />
+  </ItemGroup>-->
+
+  <ItemGroup>
 	  <ProjectReference Include="..\ManagedDoom.Shared\ManagedDoom.Shared.csproj" />
 	</ItemGroup>
- 
 
 	<ItemGroup>
 	  <MauiXaml Update="Game\WeaponsView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
-
-
-
 
 </Project>

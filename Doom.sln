@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedDoom.Maui", "Managed
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedDoom.Shared", "ManagedDoom.Shared\ManagedDoom.Shared.csproj", "{EA9720A8-3081-47A2-BC5A-8106CD7D608C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Maui.Audio", "..\Plugin.Maui.Audio\src\Plugin.Maui.Audio\Plugin.Maui.Audio.csproj", "{5BCD8754-972F-4597-90C9-4F3A6790CD8D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{594DD4E1-3404-4383-B554-7474931FDE71}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7477531C-F0D0-49B7-B952-6F7D9B7B93B1}"
@@ -32,10 +30,6 @@ Global
 		{EA9720A8-3081-47A2-BC5A-8106CD7D608C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA9720A8-3081-47A2-BC5A-8106CD7D608C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA9720A8-3081-47A2-BC5A-8106CD7D608C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5BCD8754-972F-4597-90C9-4F3A6790CD8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5BCD8754-972F-4597-90C9-4F3A6790CD8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5BCD8754-972F-4597-90C9-4F3A6790CD8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5BCD8754-972F-4597-90C9-4F3A6790CD8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
