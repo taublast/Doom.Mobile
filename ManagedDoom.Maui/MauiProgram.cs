@@ -12,6 +12,11 @@ namespace ManagedDoom.Maui
         /// </summary>
         public static bool KeepAspectRatio = true;
 
+        /// <summary>
+        /// Use sound or not
+        /// </summary>
+        public static bool UseSound = true;
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();

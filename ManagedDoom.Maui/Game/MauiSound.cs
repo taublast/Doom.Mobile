@@ -34,7 +34,7 @@ namespace ManagedDoom.Maui.Game
         {
             try
             {
-                Console.Write("Initialize sound: ");
+                //Console.Write("Initialize sound: ");
 
                 _desktop = !MauiProgram.IsMobile;
 
@@ -76,9 +76,6 @@ namespace ManagedDoom.Maui.Game
 
                 soundMixer = new AudioMixer(audioManager, channelCount);
 
-                //if (!_desktop)
-                //soundMixer.MapBalance(-1); //rotated right 90 degrees
-
                 // Initialize ChannelInfo for each channel
                 for (int i = 0; i < channelCount; i++)
                 {
@@ -91,7 +88,6 @@ namespace ManagedDoom.Maui.Game
 
                 lastUpdate = DateTime.MinValue;
 
-                Console.WriteLine("OK");
             }
             catch (Exception e)
             {
@@ -220,9 +216,9 @@ namespace ManagedDoom.Maui.Game
         public void Update()
         {
             var now = DateTime.Now;
-            if ((now - lastUpdate).TotalSeconds < 0.02)
+            if ((now - lastUpdate).TotalSeconds < 0.5)
             {
-                // Don't update so frequently (for timedemo).
+                // Don't update so frequently
                 return;
             }
 

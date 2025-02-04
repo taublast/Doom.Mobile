@@ -144,14 +144,12 @@ public class MauiDoom : MauiGame
 
         _video = new MauiVideo(_config, _content, context);
 
-        if (!args.nosound.Present && !(args.nosfx.Present && args.nomusic.Present))
+        if (!args.nosound.Present && MauiProgram.UseSound)
         {
             var audioDevice = AudioManager.Current;
 
-            if (!args.nosfx.Present)
-            {
-                _sound = new MauiSound(_config, _content, audioDevice);
-            }
+            _sound = new MauiSound(_config, _content, audioDevice);
+
             //todo implement music
             //if (!args.nomusic.Present)
             //{
