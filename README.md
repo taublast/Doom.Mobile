@@ -67,8 +67,9 @@ Stack: [.NET MAUI](https://dotnet.microsoft.com/en-us/apps/maui), [SkiaSharp](ht
 
 ## Dev Notes
 
-* Projects are separated into shared code and MAUI implementation.
-* The original ManagedDoom Silk for Windows implementation was kept to serve as a development reference.
+* You normally need to use `Doom.sln` to play.
+* Projects are separated into shared code and MAUI implementation. You can add another implementation, for example for Avalonia, by referencing the shared project.
+* The original ManagedDoom Silk for Windows implementation was kept to serve as a development reference inside `Doom-Dev.sln`.
 * iOS simulator M-chip compatible.
 * iOS real device requires interpreter OFF to work with System.Threadig.Tasks.Parellel.
 
