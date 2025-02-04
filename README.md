@@ -41,7 +41,7 @@ The final texture is rendered using a shader so it can be modified in the future
 * On Windows you can play a Debug version even when debugging.
 * On Android to have playable fps you need to compile a Release and run it on a real device. Tested to run smoothly on a slow device.
 * On iOS both for simulator and real device are fine to play without debugging. Just notice a temporary bug in Visual Studio for Windows that still debugs your app even when started on iOS without debug. Use VS preview version or drop connection with Mac and re-run app.
-* On Mac (Catalyst) you can debug with low fps or play without debugging.
+* On Mac (Catalyst) you can debug with low fps or play with 60 fps without debugging.
 
 ### Controls
 
