@@ -7,6 +7,9 @@ namespace ManagedDoom.Maui
 {
     public static class MauiProgram
     {
+        /// <summary>
+        /// Respect or not game aspect ratio, surprisingly Doom looks good even with aspect deformations
+        /// </summary>
         public static bool KeepAspectRatio = true;
 
         public static MauiApp CreateMauiApp()
