@@ -45,7 +45,7 @@ namespace ManagedDoom
                     }
                 }
 
-                Console.WriteLine("OK");
+                //Console.WriteLine("OK");
             }
             catch (Exception e)
             {

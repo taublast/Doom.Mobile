@@ -56,7 +56,7 @@ namespace ManagedDoom
                     ProcessLines(File.ReadLines(fileName));
                 }
 
-                Console.WriteLine("OK (" + string.Join(", ", fileNames.Select(x => Path.GetFileName(x))) + ")");
+                //Console.WriteLine("OK (" + string.Join(", ", fileNames.Select(x => Path.GetFileName(x))) + ")");
             }
             catch (Exception e)
             {
@@ -80,7 +80,7 @@ namespace ManagedDoom
 
                     ProcessLines(ReadLines(wad.ReadLump(lump)));
 
-                    Console.WriteLine("OK");
+                    //Console.WriteLine("OK");
                 }
                 catch (Exception e)
                 {

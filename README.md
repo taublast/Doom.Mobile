@@ -11,14 +11,12 @@ Actually repo already contains the doom2 wad file included for a fast usage, unt
 
 A cross-platform DOOM game, play it on iOS, MacCatalyst, Android and Windows.
 
-Uses a modified C# Doom engine of [ManagedDoom](https://github.com/sinshu/managed-doom).
 Uses a modified C# Doom engine from [ManagedDoom](https://github.com/sinshu/managed-doom).
 
 
 ## Why Another .NET DOOM?
 
 * Cross-platform implementation for iOS, MacCatalyst, Android and Windows. 
-* Mobile touch gestures and additionally keyboard on desktop.
 * Mobile touch gestures and additionally keyboard for desktop.
 * Custom UI to select weapons on mobile, tap left-bottom corner to open.
 * Multi-channel stereo sound working on all platforms.
@@ -46,10 +44,7 @@ To have max FPS:
 
 * On Android you need to compile a Release version and run it on a real device. Tested to run smoothly on a slow device.
 * On Mac you can use a Debug version without debugging (important).
-* On iOS both for simulator and real device you can use a Debug version without debugging. Notice a bug in Visual Studio for Windows that starts a debugging session even when you start without debug. Either use a next version (preview) or drop the connection with Mac to break the debug session.
-=======
 * On iOS both for simulator and real device you can use a Debug version without debugging. Notice a current bug in Visual Studio for Windows that starts a debugging session even when you start without debug. Euther use a next version (preview) or drop connection with Mac to break session.
->>>>>>> Stashed changes
 * On Windows you can play a Debug version even when debugging.
 
 ### Controls
@@ -62,7 +57,7 @@ To have max FPS:
 * On desktop you can also use usual keyboard keys, defaults is FIRE with CONTROL, USE with SPACE..
 * Mouse on desktop is acting different from original DOOM as this version is touch-screens-friendly in the first place.
 
-Could to be improved i guess. Not only the gestures code, but also maybe could add some HUD buttons for movement. Please leave your thoughts in Discussions.
+Could to be much improved, not only the gestures code, but also maybe could add some HUD buttons for movement. Please leave your thoughts in Discussions.
 
 ## Behind The Scenes
 
@@ -88,7 +83,6 @@ Stack: [.NET MAUI](https://dotnet.microsoft.com/en-us/apps/maui), [SkiaSharp](ht
 * Enhance Input with controller support and maybe add HUD buttons.
 * UI for selecting one of the WADs when many are found.
 * Track selected weapon and highlight its number in custom UI.
-* MIDI music
 * MIDI music, totally doable with `Plugin.Maui.Audio`, just need more free time for that.
 
 ## Ancestors

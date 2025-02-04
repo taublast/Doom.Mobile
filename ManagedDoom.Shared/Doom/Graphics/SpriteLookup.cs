@@ -129,7 +129,7 @@ namespace ManagedDoom
                     spriteDefs[i] = new SpriteDef(frames);
                 }
 
-                Console.WriteLine("OK (" + cache.Count + " sprites)");
+                //Console.WriteLine("OK (" + cache.Count + " sprites)");
             }
             catch (Exception e)
             {

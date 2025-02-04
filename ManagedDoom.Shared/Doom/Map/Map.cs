@@ -114,7 +114,7 @@ namespace ManagedDoom
                     title = DoomInfo.MapTitles.Doom[options.Episode - 1][options.Map - 1];
                 }
 
-                Console.WriteLine("OK");
+                //Console.WriteLine("OK");
             }
             catch (Exception e)
             {

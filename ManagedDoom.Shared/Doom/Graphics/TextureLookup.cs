@@ -43,7 +43,7 @@ namespace ManagedDoom
                 InitLookup(wad);
                 InitSwitchList();
 
-                Console.WriteLine("OK (" + textures.Count + " textures)");
+                //Console.WriteLine("OK (" + textures.Count + " textures)");
             }
             catch (Exception e)
             {

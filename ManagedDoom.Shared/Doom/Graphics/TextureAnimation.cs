@@ -75,7 +75,7 @@ namespace ManagedDoom
 
                 animations = list.ToArray();
 
-                Console.WriteLine("OK");
+                //Console.WriteLine("OK");
             }
             catch (Exception e)
             {

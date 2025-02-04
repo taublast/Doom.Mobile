@@ -51,7 +51,7 @@ namespace ManagedDoom
                 missionPack = GetMissionPack(names);
                 gameVersion = GetGameVersion(names);
 
-                Console.WriteLine("OK (" + string.Join(", ", fileNames.Select(x => Path.GetFileName(x))) + ")");
+                //Console.WriteLine("OK (" + string.Join(", ", fileNames.Select(x => Path.GetFileName(x))) + ")");
             }
             catch (Exception e)
             {

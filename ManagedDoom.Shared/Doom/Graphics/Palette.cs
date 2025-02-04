@@ -49,7 +49,7 @@ namespace ManagedDoom
                     palettes[i] = new uint[256];
                 }
 
-                Console.WriteLine("OK");
+                //Console.WriteLine("OK");
             }
             catch (Exception e)
             {

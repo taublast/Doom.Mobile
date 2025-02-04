@@ -105,7 +105,7 @@ namespace ManagedDoom
                 skyFlatNumber = nameToNumber["F_SKY1"];
                 skyFlat = nameToFlat["F_SKY1"];
 
-                Console.WriteLine("OK (" + nameToFlat.Count + " flats)");
+                //Console.WriteLine("OK (" + nameToFlat.Count + " flats)");
             }
             catch (Exception e)
             {
@@ -183,7 +183,7 @@ namespace ManagedDoom
                 skyFlatNumber = nameToNumber["F_SKY1"];
                 skyFlat = nameToFlat["F_SKY1"];
 
-                Console.WriteLine("OK (" + nameToFlat.Count + " flats)");
+                //Console.WriteLine("OK (" + nameToFlat.Count + " flats)");
             }
             catch (Exception e)
             {

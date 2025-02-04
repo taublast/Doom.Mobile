@@ -195,7 +195,7 @@ namespace ManagedDoom
 
                 isRestoredFromFile = true;
 
-                Console.WriteLine("OK");
+                //Console.WriteLine("OK");
             }
             catch
             {
