@@ -38,6 +38,8 @@ This project code would look for doom data `.wad` file placed inside `Resources/
 ```
 You can find out more about this subject by googling one of this filenames.
 
+You can set the `static bool KeepAspectRatio` inside `MauiProgram` to `false` if you want a more immersive experience.
+
 ### Performance
 
 To have max FPS:

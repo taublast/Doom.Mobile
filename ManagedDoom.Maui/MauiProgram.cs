@@ -8,6 +8,8 @@ namespace ManagedDoom.Maui
 {
     public static class MauiProgram
     {
+        public static bool KeepAspectRatio = true;
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();

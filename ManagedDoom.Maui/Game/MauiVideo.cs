@@ -88,14 +88,11 @@ public class MauiVideo : IVideo, IDisposable
             RenderUnsafer(doom, frameFrac); // _texture prepared inside
         }
 
-
-        bool keepAspect = true;
-
         SKRect viewport;
         float centerX = destination.MidX;
         float centerY = destination.MidY;
 
-        if (keepAspect)
+        if (MauiProgram.KeepAspectRatio)
         {
             // DOOM aspect ratio
             float textureWidth = _textureWidth;
