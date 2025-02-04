@@ -32,7 +32,7 @@ You can find out more about this subject by googling one of this filenames.
 
 This repo contains `freedoom2.wad` for a fast start, [free content under BSD licence](https://freedoom.github.io/). You can replace it with your own file.
 
-You can set the `static bool KeepAspectRatio` inside `MauiProgram` to `false` if you want a more immersive experience.
+You can set the `static bool KeepAspectRatio` inside `MauiProgram` to `false` if you want a more immersive experience.  
 As doom is computing its walls on CPU do not try to debug this on mobile.. See performance notes below.  
 The final texture is rendered using a shader so it can be modified in the future to do more work on GPU for the DOOM engine.  
 
