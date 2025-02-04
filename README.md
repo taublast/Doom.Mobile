@@ -1,12 +1,3 @@
-To compile this you need to put a custom fork https://github.com/taublast/Plugin.Maui.Audio at the same level then this cloned repo, in parallel.
-
-/audio plugin  
-/doom.mobile
-
-As doom is computing its walls on CPU do not try to debug this on mobile.. See performance notes below.  
-The final texture is rendered using a shader so it can be modified in the future to do more work on GPU.  
-Actually repo already contains the doom2 wad file included for a fast usage, until going public.
-
 # DOOM Mobile
 
 A cross-platform DOOM game, play it on iOS, MacCatalyst, Android and Windows.
@@ -28,26 +19,29 @@ Uses a modified C# Doom engine from [ManagedDoom](https://github.com/sinshu/mana
 While DOOM source code was openely released for non-profit use, it requires you to own a real copy of one of the DOOMs. 
 This project code would look for doom data `.wad` file placed inside `Resources/Raw` folder as `MauiAsset`. It looks for one of the following:
 ```
+    "freedoom2.wad",
+    "freedoom1.wad",
     "doom2.wad",
     "plutonia.wad",
     "tnt.wad",
     "doom.wad",
     "doom1.wad",
-    "freedoom2.wad",
-    "freedoom1.wad"
 ```
 You can find out more about this subject by googling one of this filenames.
 
+This repo contains `freedoom2.wad` for a fast start, [free content under BSD licence](https://freedoom.github.io/). You can replace it with your own file.
+
 You can set the `static bool KeepAspectRatio` inside `MauiProgram` to `false` if you want a more immersive experience.
+As doom is computing its walls on CPU do not try to debug this on mobile.. See performance notes below.  
+The final texture is rendered using a shader so it can be modified in the future to do more work on GPU.  
+Actually repo already contains the doom2 wad file included for a fast usage, until going public.
 
 ### Performance
 
-To have max FPS:
-
-* On Android you need to compile a Release version and run it on a real device. Tested to run smoothly on a slow device.
-* On Mac you can use a Debug version without debugging (important).
-* On iOS both for simulator and real device you can use a Debug version without debugging. Notice a current bug in Visual Studio for Windows that starts a debugging session even when you start without debug. Euther use a next version (preview) or drop connection with Mac to break session.
 * On Windows you can play a Debug version even when debugging.
+* On Mac you can debug with low fps or play without debugging.
+* On Android to have playable fps you need to compile a Release and run it on a real device. Tested to run smoothly on a slow device.
+* On iOS both for simulator and real device are fine to play without debugging. Just notice a temporary bug in Visual Studio for Windows that still debugs your app even when started on iOS without debug. Use VS preview version or drop connection with Mac and re-run app.
 
 ### Controls
 

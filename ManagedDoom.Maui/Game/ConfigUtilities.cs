@@ -45,15 +45,20 @@ namespace ManagedDoom.Maui.Game
                     var filenameDb = Path.Combine(FileSystem.AppDataDirectory, name);
                     if (!File.Exists(filenameDb))
                     {
-                        using var stream = FileSystem.OpenAppPackageFileAsync(name).GetAwaiter().GetResult();
-                        if (stream == null)
-                            return false;
-                        using (var memoryStream = new MemoryStream())
+                        try
                         {
-                            stream.CopyTo(memoryStream);
-                            File.WriteAllBytes(filenameDb, memoryStream.ToArray());
+                            using var stream = FileSystem.OpenAppPackageFileAsync(name).GetAwaiter().GetResult();
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
+                                File.WriteAllBytes(filenameDb, memoryStream.ToArray());
+                            }
                         }
-
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            return false;
+                        }
                     }
                 }
                 return true;
