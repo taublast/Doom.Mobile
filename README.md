@@ -33,8 +33,6 @@ You can find out more about this subject by googling one of this filenames.
 This repo contains `freedoom2.wad` for a fast start, [free content under BSD licence](https://freedoom.github.io/). You can replace it with your own file.
 
 You can set the `static bool KeepAspectRatio` inside `MauiProgram` to `false` if you want a more immersive experience.  
-As doom is computing its walls on CPU do not try to debug this on mobile.. See performance notes below.  
-The final texture is rendered using a shader so it can be modified in the future to do more work on GPU for the DOOM engine.  
 
 ### Performance
 
@@ -68,6 +66,8 @@ Stack: [.NET MAUI](https://dotnet.microsoft.com/en-us/apps/maui), [SkiaSharp](ht
 ## Dev Notes
 
 * You normally need to use `Doom.sln` to play.
+* As doom is computing its walls on CPU do not try to debug this on mobile. See performance notes above.  
+* The final texture is rendered using a shader so we can be modify it in the future to do more work on GPU for the DOOM engine.
 * Projects are separated into shared code and MAUI implementation. You can add another implementation, for example for Avalonia, by referencing the shared project.
 * The original ManagedDoom Silk for Windows implementation was kept to serve as a development reference inside `Doom-Dev.sln`.
 * iOS simulator M-chip compatible.
