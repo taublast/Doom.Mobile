@@ -11,6 +11,7 @@ public class MauiDoom : MauiGame
     private MauiSound _sound;
     private MauiVideo _video;
     private MauiUserInput _input;
+    private GameControllerUserInput _gameController;
 
     private CommandLineArgs args;
     private Config _config;
@@ -158,8 +159,16 @@ public class MauiDoom : MauiGame
         }
 
         _input = new MauiUserInput(_config, !args.nomouse.Present, OnUiCommand);
+        _gameController = new GameControllerUserInput();
 
-        _doom = new Doom(args, _config, _content, _video, _sound, _music, _input);
+        _doom = new Doom(
+            args,
+            _config,
+            _content,
+            _video,
+            _sound,
+            _music,
+            new AggregatedUserInput([_input, _gameController]));
 
         _input.Attach(_doom);
 

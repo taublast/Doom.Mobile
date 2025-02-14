@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orbit.Input", "Orbit.Input\Orbit.Input.csproj", "{2A39507B-6073-402A-B2D4-CE466C27819F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{EA9720A8-3081-47A2-BC5A-8106CD7D608C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA9720A8-3081-47A2-BC5A-8106CD7D608C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA9720A8-3081-47A2-BC5A-8106CD7D608C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A39507B-6073-402A-B2D4-CE466C27819F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A39507B-6073-402A-B2D4-CE466C27819F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A39507B-6073-402A-B2D4-CE466C27819F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A39507B-6073-402A-B2D4-CE466C27819F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +43,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{298BCEE7-9882-4C67-90A8-E0B997312FD4} = {594DD4E1-3404-4383-B554-7474931FDE71}
 		{EA9720A8-3081-47A2-BC5A-8106CD7D608C} = {594DD4E1-3404-4383-B554-7474931FDE71}
+		{2A39507B-6073-402A-B2D4-CE466C27819F} = {594DD4E1-3404-4383-B554-7474931FDE71}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2EA5D015-FB83-4E41-A368-1D8DC542CA03}
