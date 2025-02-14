@@ -84,6 +84,7 @@
 
   <ItemGroup>
 	  <ProjectReference Include="..\ManagedDoom.Shared\ManagedDoom.Shared.csproj" />
+	  <ProjectReference Include="..\Orbit.Input\Orbit.Input.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

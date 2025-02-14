@@ -265,8 +265,6 @@ public class MauiUserInput : IUserInput, IDisposable
         weaponKeys[5] = IsPressed(DoomKey.Num6);
         weaponKeys[6] = IsPressed(DoomKey.Num7);
 
-        cmd.Clear();
-
         var strafe = keyStrafe;
         var speed = keyRun ? 1 : 0;
         var forward = 0;
