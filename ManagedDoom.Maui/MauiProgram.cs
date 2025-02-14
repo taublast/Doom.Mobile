@@ -46,7 +46,7 @@ namespace ManagedDoom.Maui
                       Height = 400,
                   }
               });
-            IsMobile = false;//DeviceInfo.Current.Idiom == DeviceIdiom.Tablet || DeviceInfo.Current.Idiom == DeviceIdiom.Phone;
+            IsMobile = DeviceInfo.Current.Idiom == DeviceIdiom.Tablet || DeviceInfo.Current.Idiom == DeviceIdiom.Phone;
 #endif
 
             builder.ConfigureFonts(fonts =>
