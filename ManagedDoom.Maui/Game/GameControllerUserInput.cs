@@ -5,19 +5,25 @@ namespace ManagedDoom.Maui.Game;
 
 public class GameControllerUserInput : IUserInput
 {
-    private readonly Orbit.Input.GameController _gameController;
+    private Orbit.Input.GameController? _gameController;
     private int _currentIndex;
 
     public GameControllerUserInput()
     {
-        _gameController = GameControllerManager.Current.GameControllers.First();
+        GameControllerManager.Current.GameControllerConnected += OnGameControllerConnected; 
+        _ = GameControllerManager.Current.Initialize();
+    }
+
+    private void OnGameControllerConnected(object? sender, GameControllerConnectedEventArgs args)
+    {
+        _gameController = args.GameController;
         
         _gameController
             .When(
                 button: "ButtonNorth",
                 isPressed: _ =>
                 {
-                    _currentIndex = (_currentIndex * TicCmdButtons.WeaponShift) % (7 * TicCmdButtons.WeaponShift);
+                    _currentIndex = (_currentIndex + TicCmdButtons.WeaponShift) % (7 * TicCmdButtons.WeaponShift);
                 })
             .When(
                 button: "RightTrigger",
@@ -29,6 +35,11 @@ public class GameControllerUserInput : IUserInput
     
     public void BuildTicCmd(TicCmd cmd)
     {
+        if (_gameController is null)
+        {
+            return;
+        }
+        
         if (_gameController.RightShoulder.Trigger > 0)
         {
             cmd.Buttons |= TicCmdButtons.Attack;
