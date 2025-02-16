@@ -41,11 +41,6 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
-  <!--fix crash when using System.Threadig.Tasks.Parellel-->
-  <PropertyGroup Condition=" '$(Platform)' == 'iPhone' ">
-    <MtouchInterpreter>-all,ManagedDoom.Maui.dll</MtouchInterpreter>
-  </PropertyGroup>
-
   <!--personal provisioning for iPhone-->
   <Import Project="../../Provisioning.targets" Condition="Exists('../../Provisioning.targets')" />
 
