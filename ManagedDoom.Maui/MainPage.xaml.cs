@@ -1,4 +1,5 @@
 ﻿using DrawnUi.Maui.Draw;
+using Orbit.Input;
 
 namespace ManagedDoom.Maui
 {
@@ -13,6 +14,9 @@ namespace ManagedDoom.Maui
 #if IOS
                 Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.SetPrefersHomeIndicatorAutoHidden(this, true);
 #endif
+
+                Console.WriteLine("HELLO FROM DOOM");
+                GameControllerManager.Current.GameControllerConnected += OnGameControllerConnected;
             }
             catch (Exception e)
             {
@@ -20,7 +24,10 @@ namespace ManagedDoom.Maui
             }
         }
 
-
+        private async void OnGameControllerConnected(object? sender, GameControllerConnectedEventArgs args)
+        {
+            await DisplayAlert(@"Game controller connected!", "Game controller connected!", "OK");
+        }
     }
 
 }
