@@ -20,7 +20,9 @@ public partial class GameControllerManager
     {
         if (e.Notification.Object is GCController controller)
         {
-            gameControllers.Add(new GameController(controller));
+            var gameController = new GameController(controller);
+            gameControllers.Add(gameController);
+            OnGameControllerConnected(gameController);
         }
     }
 }

@@ -10,8 +10,8 @@ public class GameControllerUserInput : IUserInput
 
     public GameControllerUserInput()
     {
-        // GameControllerManager.Current.GameControllerConnected += OnGameControllerConnected; 
-        // _ = GameControllerManager.Current.Initialize();
+        GameControllerManager.Current.GameControllerConnected += OnGameControllerConnected; 
+        _ = GameControllerManager.Current.Initialize();
     }
 
     private void OnGameControllerConnected(object? sender, GameControllerConnectedEventArgs args)
