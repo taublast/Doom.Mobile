@@ -2,6 +2,7 @@
 using DrawnUi.Maui.Game;
 using Plugin.Maui.Audio;
 using SKRect = SkiaSharp.SKRect;
+using SkiaSharp;
 
 namespace ManagedDoom.Maui.Game;
 
@@ -22,6 +23,12 @@ public class MauiDoom : MauiGame
     private bool _initialized;
 
     protected WeaponsView _uiSelectWeapon;
+
+    private const float ButtonSize = 64; // Adjust as needed
+    private const float ButtonSpacing = 20;
+    private SKColor ButtonColor = SKColors.LightGray;
+    private SKColor ButtonTextColor = SKColors.Black;
+
 
     public MauiDoom()
     {
@@ -46,48 +53,33 @@ public class MauiDoom : MauiGame
         }
     }
 
-
-    /// <summary>
-    /// Normally all input goes to doom, but we want to intercept some
-    /// keys here so show our own UI for selecting weapons etc.
-    /// Will be invoked by MauiUserInput in that case
-    /// </summary>    
-    /// <param name="command"></param>
-    /// <returns>was consumed</returns>
     bool OnUiCommand(UiCommand command)
     {
         switch (command)
         {
-        case UiCommand.SelectWeapon:
-        {
-            if (!_uiSelectWeapon.IsVisible)
-            {
-                _uiSelectWeapon.IsVisible = true;
-                return true;
-            }
-        }
-        break;
+            case UiCommand.SelectWeapon:
+                {
+                    if (!_uiSelectWeapon.IsVisible)
+                    {
+                        _uiSelectWeapon.IsVisible = true;
+                        return true;
+                    }
+                }
+                break;
 
-        case UiCommand.Reset:
-        default:
-        if (_uiSelectWeapon.IsVisible)
-        {
-            _uiSelectWeapon.IsVisible = false;
-            return true;
-        }
-        break;
+            case UiCommand.Reset:
+            default:
+                if (_uiSelectWeapon.IsVisible)
+                {
+                    _uiSelectWeapon.IsVisible = false;
+                    return true;
+                }
+                break;
         }
 
         return false;
     }
 
-    /// <summary>
-    /// Paint the game, invoked every frame
-    /// </summary>
-    /// <param name="context"></param>
-    /// <param name="destination"></param>
-    /// <param name="scale"></param>
-    /// <param name="arguments"></param>
     protected override void Paint(SkiaDrawingContext context, SKRect destination, float scale, object arguments)
     {
         //base.Paint(ctx, destination, scale, arguments); - will not draw background color/gradient in this case
@@ -118,8 +110,59 @@ public class MauiDoom : MauiGame
 
         //render custom ui
         var drawnChildrenCount = DrawViews(context, DrawingRect, scale);//GetDoomScale(DrawingRect, scale));
+
+        // Draw virtual keys
+        DrawVirtualKeys(context, destination, scale);
     }
 
+    private void DrawVirtualKeys(SkiaDrawingContext context, SKRect destination, float scale)
+    {
+        float buttonScale = scale;
+        float buttonSizeScaled = ButtonSize * buttonScale;
+        float spacingScaled = ButtonSpacing * buttonScale;
+        float margin = spacingScaled;
+
+        float buttonRowY = destination.Bottom - buttonSizeScaled - margin;
+
+        float leftButtonX = destination.Left + margin;
+        float rightButtonX = leftButtonX + buttonSizeScaled + spacingScaled;
+        float aButtonX = destination.Right - buttonSizeScaled - margin;
+        float bButtonX = aButtonX - buttonSizeScaled - spacingScaled;
+
+
+        DrawButton(context, leftButtonX, buttonRowY, buttonSizeScaled, "<", MauiKey.ArrowLeft, scale);
+
+        DrawButton(context, rightButtonX, buttonRowY, buttonSizeScaled, ">", MauiKey.ArrowRight, scale);
+
+
+        DrawButton(context, aButtonX, buttonRowY, buttonSizeScaled, "AltRight", MauiKey.AltRight, scale); // AltRight for shoot
+
+        DrawButton(context, bButtonX, buttonRowY, buttonSizeScaled, "Space", MauiKey.Space, scale); // Space for jump
+    }
+
+    private void DrawButton(SkiaDrawingContext context, float x, float y, float size, string text, MauiKey key, float scale)
+    {
+        SKRect buttonRect = new SKRect(x, y - size / 2, x + size, y + size / 2);
+        var paint = new SKPaint
+        {
+            Color = ButtonColor,
+            Style = SKPaintStyle.Fill,
+            IsAntialias = true,
+        };
+
+        context.Canvas.DrawRoundRect(buttonRect, 10 * scale, 10 * scale, paint);
+
+        paint.Color = ButtonTextColor;
+        paint.TextSize = size * 0.5f;
+        paint.TextAlign = SKTextAlign.Center;
+        float textX = buttonRect.MidX;
+        float textY = buttonRect.MidY + (paint.TextSize / 2) - (paint.FontMetrics.Bottom / 2); // Center vertically
+
+
+        context.Canvas.DrawText(text, textX, textY, paint);
+
+        _input.AddVirtualKey(key, buttonRect);
+    }
 
 
     /// <summary>

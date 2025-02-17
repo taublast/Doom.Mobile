@@ -16,6 +16,9 @@ public class MauiUserInput : IUserInput, IDisposable
     private Dictionary<DoomKey, EventTimestamp> Pressed = new();
     private readonly Config _config;
 
+    // Virtual button data
+    private Dictionary<MauiKey, SKRect> _virtualKeys = new();
+
     /// <summary>
     /// Set the status of a key, Down or Up.
     /// If it is an event then fire this event to Doom engine, otherwise just set the key status.
@@ -32,11 +35,6 @@ public class MauiUserInput : IUserInput, IDisposable
             pressed = currentTime;
 
         var needTrigger = true;
-        //if (Pressed.TryGetValue(doomKey, out var set))
-        //{
-        //    if (set.IsEmpty)
-        //        needTrigger = false;
-        //}
 
         Pressed[doomKey] = pressed;
 
@@ -55,131 +53,178 @@ public class MauiUserInput : IUserInput, IDisposable
     {
         switch (silkKey)
         {
-        case MauiKey.Space: return DoomKey.Space;
-        // case MauiKey.Apostrophe: return DoomKey.Apostrophe;
-        case MauiKey.Comma: return DoomKey.Comma;
-        case MauiKey.Minus: return DoomKey.Subtract;
-        case MauiKey.Period: return DoomKey.Period;
-        case MauiKey.Slash: return DoomKey.Slash;
-        case MauiKey.Numpad0: return DoomKey.Num0;
-        // case MauiKey.D0: return DoomKey.D0;
-        case MauiKey.Numpad1: return DoomKey.Num1;
-        case MauiKey.Numpad2: return DoomKey.Num2;
-        case MauiKey.Numpad3: return DoomKey.Num3;
-        case MauiKey.Numpad4: return DoomKey.Num4;
-        case MauiKey.Numpad5: return DoomKey.Num5;
-        case MauiKey.Numpad6: return DoomKey.Num6;
-        case MauiKey.Numpad7: return DoomKey.Num7;
-        case MauiKey.Numpad8: return DoomKey.Num8;
-        case MauiKey.Numpad9: return DoomKey.Num9;
-        case MauiKey.Semicolon: return DoomKey.Semicolon;
-        case MauiKey.Equal: return DoomKey.Equal;
-        case MauiKey.KeyA: return DoomKey.A;
-        case MauiKey.KeyB: return DoomKey.B;
-        case MauiKey.KeyC: return DoomKey.C;
-        case MauiKey.KeyD: return DoomKey.D;
-        case MauiKey.KeyE: return DoomKey.E;
-        case MauiKey.KeyF: return DoomKey.F;
-        case MauiKey.KeyG: return DoomKey.G;
-        case MauiKey.KeyH: return DoomKey.H;
-        case MauiKey.KeyI: return DoomKey.I;
-        case MauiKey.KeyJ: return DoomKey.J;
-        case MauiKey.KeyK: return DoomKey.K;
-        case MauiKey.KeyL: return DoomKey.L;
-        case MauiKey.KeyM: return DoomKey.M;
-        case MauiKey.KeyN: return DoomKey.N;
-        case MauiKey.KeyO: return DoomKey.O;
-        case MauiKey.KeyP: return DoomKey.P;
-        case MauiKey.KeyQ: return DoomKey.Q;
-        case MauiKey.KeyR: return DoomKey.R;
-        case MauiKey.KeyS: return DoomKey.S;
-        case MauiKey.KeyT: return DoomKey.T;
-        case MauiKey.KeyU: return DoomKey.U;
-        case MauiKey.KeyV: return DoomKey.V;
-        case MauiKey.KeyW: return DoomKey.W;
-        case MauiKey.KeyX: return DoomKey.X;
-        case MauiKey.KeyY: return DoomKey.Y;
-        case MauiKey.KeyZ: return DoomKey.Z;
-        case MauiKey.BracketLeft: return DoomKey.LBracket;
-        case MauiKey.Backslash: return DoomKey.Backslash;
-        case MauiKey.BracketRight: return DoomKey.RBracket;
-        // case MauiKey.GraveAccent: return DoomKey.GraveAccent;
-        // case MauiKey.World1: return DoomKey.World1;
-        // case MauiKey.World2: return DoomKey.World2;
-        case MauiKey.Escape: return DoomKey.Escape;
-        case MauiKey.Enter: return DoomKey.Enter;
-        case MauiKey.Tab: return DoomKey.Tab;
-        case MauiKey.Backspace: return DoomKey.Backspace;
-        case MauiKey.Insert: return DoomKey.Insert;
-        case MauiKey.Delete: return DoomKey.Delete;
-        case MauiKey.ArrowRight: return DoomKey.Right;
-        case MauiKey.ArrowLeft: return DoomKey.Left;
-        case MauiKey.ArrowDown: return DoomKey.Down;
-        case MauiKey.ArrowUp: return DoomKey.Up;
-        case MauiKey.PageUp: return DoomKey.PageUp;
-        case MauiKey.PageDown: return DoomKey.PageDown;
-        case MauiKey.Home: return DoomKey.Home;
-        case MauiKey.End: return DoomKey.End;
-        // case MauiKey.CapsLock: return DoomKey.CapsLock;
-        // case MauiKey.ScrollLock: return DoomKey.ScrollLock;
-        // case MauiKey.NumLock: return DoomKey.NumLock;
-        // case MauiKey.PrintScreen: return DoomKey.PrintScreen;
-        case MauiKey.Pause: return DoomKey.Pause;
-        case MauiKey.F1: return DoomKey.F1;
-        case MauiKey.F2: return DoomKey.F2;
-        case MauiKey.F3: return DoomKey.F3;
-        case MauiKey.F4: return DoomKey.F4;
-        case MauiKey.F5: return DoomKey.F5;
-        case MauiKey.F6: return DoomKey.F6;
-        case MauiKey.F7: return DoomKey.F7;
-        case MauiKey.F8: return DoomKey.F8;
-        case MauiKey.F9: return DoomKey.F9;
-        case MauiKey.F10: return DoomKey.F10;
-        case MauiKey.F11: return DoomKey.F11;
-        case MauiKey.F12: return DoomKey.F12;
-        //case MauiKey.F13: return DoomKey.F13; //todo?
-        //case MauiKey.F14: return DoomKey.F14;//todo?
-        //case MauiKey.F15: return DoomKey.F15;//todo?
-        // case MauiKey.F16: return DoomKey.F16;
-        // case MauiKey.F17: return DoomKey.F17;
-        // case MauiKey.F18: return DoomKey.F18;
-        // case MauiKey.F19: return DoomKey.F19;
-        // case MauiKey.F20: return DoomKey.F20;
-        // case MauiKey.F21: return DoomKey.F21;
-        // case MauiKey.F22: return DoomKey.F22;
-        // case MauiKey.F23: return DoomKey.F23;
-        // case MauiKey.F24: return DoomKey.F24;
-        // case MauiKey.F25: return DoomKey.F25;
-        //case MauiKey.Numpad0: return DoomKey.Numpad0; //todo check keypad insted of numpad?
-        //case MauiKey.Numpad1: return DoomKey.Numpad1;
-        //case MauiKey.Numpad2: return DoomKey.Numpad2;
-        //case MauiKey.Numpad3: return DoomKey.Numpad3;
-        //case MauiKey.Numpad4: return DoomKey.Numpad4;
-        //case MauiKey.Numpad5: return DoomKey.Numpad5;
-        //case MauiKey.Keypad6: return DoomKey.Numpad6;
-        //case MauiKey.Keypad7: return DoomKey.Numpad7;
-        //case MauiKey.Keypad8: return DoomKey.Numpad8;
-        //case MauiKey.Keypad9: return DoomKey.Numpad9;
-        // case MauiKey.KeypadDecimal: return DoomKey.Decimal;
-        case MauiKey.NumpadDivide: return DoomKey.Divide;
-        case MauiKey.NumpadMultiply: return DoomKey.Multiply;
-        case MauiKey.NumpadSubtract: return DoomKey.Subtract;
-        case MauiKey.NumpadAdd: return DoomKey.Add;
-        //case MauiKey.Enter return DoomKey.Enter;
-        //case MauiKey.Equal: return DoomKey.Equal;
-        case MauiKey.ShiftLeft: return DoomKey.LShift;
-        case MauiKey.ControlLeft: return DoomKey.LControl;
-        case MauiKey.AltLeft: return DoomKey.LAlt;
-        // case MauiKey.SuperLeft: return DoomKey.SuperLeft;
-        case MauiKey.ShiftRight: return DoomKey.RShift;
-        case MauiKey.ControlRight: return DoomKey.RControl;
-        case MauiKey.AltRight: return DoomKey.RAlt;
-        // case MauiKey.SuperRight: return DoomKey.SuperRight;
-        case MauiKey.ContextMenu: return DoomKey.Menu;
-        default: return DoomKey.Unknown;
+            case MauiKey.Space:
+                return DoomKey.Space;
+            case MauiKey.Comma:
+                return DoomKey.Comma;
+            case MauiKey.Minus:
+                return DoomKey.Subtract;
+            case MauiKey.Period:
+                return DoomKey.Period;
+            case MauiKey.Slash:
+                return DoomKey.Slash;
+            case MauiKey.Numpad0:
+                return DoomKey.Num0;
+            case MauiKey.Numpad1:
+                return DoomKey.Num1;
+            case MauiKey.Numpad2:
+                return DoomKey.Num2;
+            case MauiKey.Numpad3:
+                return DoomKey.Num3;
+            case MauiKey.Numpad4:
+                return DoomKey.Num4;
+            case MauiKey.Numpad5:
+                return DoomKey.Num5;
+            case MauiKey.Numpad6:
+                return DoomKey.Num6;
+            case MauiKey.Numpad7:
+                return DoomKey.Num7;
+            case MauiKey.Numpad8:
+                return DoomKey.Num8;
+            case MauiKey.Numpad9:
+                return DoomKey.Num9;
+            case MauiKey.Semicolon:
+                return DoomKey.Semicolon;
+            case MauiKey.Equal:
+                return DoomKey.Equal;
+            case MauiKey.KeyA:
+                return DoomKey.A;
+            case MauiKey.KeyB:
+                return DoomKey.B;
+            case MauiKey.KeyC:
+                return DoomKey.C;
+            case MauiKey.KeyD:
+                return DoomKey.D;
+            case MauiKey.KeyE:
+                return DoomKey.E;
+            case MauiKey.KeyF:
+                return DoomKey.F;
+            case MauiKey.KeyG:
+                return DoomKey.G;
+            case MauiKey.KeyH:
+                return DoomKey.H;
+            case MauiKey.KeyI:
+                return DoomKey.I;
+            case MauiKey.KeyJ:
+                return DoomKey.J;
+            case MauiKey.KeyK:
+                return DoomKey.K;
+            case MauiKey.KeyL:
+                return DoomKey.L;
+            case MauiKey.KeyM:
+                return DoomKey.M;
+            case MauiKey.KeyN:
+                return DoomKey.N;
+            case MauiKey.KeyO:
+                return DoomKey.O;
+            case MauiKey.KeyP:
+                return DoomKey.P;
+            case MauiKey.KeyQ:
+                return DoomKey.Q;
+            case MauiKey.KeyR:
+                return DoomKey.R;
+            case MauiKey.KeyS:
+                return DoomKey.S;
+            case MauiKey.KeyT:
+                return DoomKey.T;
+            case MauiKey.KeyU:
+                return DoomKey.U;
+            case MauiKey.KeyV:
+                return DoomKey.V;
+            case MauiKey.KeyW:
+                return DoomKey.W;
+            case MauiKey.KeyX:
+                return DoomKey.X;
+            case MauiKey.KeyY:
+                return DoomKey.Y;
+            case MauiKey.KeyZ:
+                return DoomKey.Z;
+            case MauiKey.BracketLeft:
+                return DoomKey.LBracket;
+            case MauiKey.Backslash:
+                return DoomKey.Backslash;
+            case MauiKey.BracketRight:
+                return DoomKey.RBracket;
+            case MauiKey.Escape:
+                return DoomKey.Escape;
+            case MauiKey.Enter:
+                return DoomKey.Enter;
+            case MauiKey.Tab:
+                return DoomKey.Tab;
+            case MauiKey.Backspace:
+                return DoomKey.Backspace;
+            case MauiKey.Insert:
+                return DoomKey.Insert;
+            case MauiKey.Delete:
+                return DoomKey.Delete;
+            case MauiKey.ArrowRight:
+                return DoomKey.Right;
+            case MauiKey.ArrowLeft:
+                return DoomKey.Left;
+            case MauiKey.ArrowDown:
+                return DoomKey.Down;
+            case MauiKey.ArrowUp:
+                return DoomKey.Up;
+            case MauiKey.PageUp:
+                return DoomKey.PageUp;
+            case MauiKey.PageDown:
+                return DoomKey.PageDown;
+            case MauiKey.Home:
+                return DoomKey.Home;
+            case MauiKey.End:
+                return DoomKey.End;
+            case MauiKey.Pause:
+                return DoomKey.Pause;
+            case MauiKey.F1:
+                return DoomKey.F1;
+            case MauiKey.F2:
+                return DoomKey.F2;
+            case MauiKey.F3:
+                return DoomKey.F3;
+            case MauiKey.F4:
+                return DoomKey.F4;
+            case MauiKey.F5:
+                return DoomKey.F5;
+            case MauiKey.F6:
+                return DoomKey.F6;
+            case MauiKey.F7:
+                return DoomKey.F7;
+            case MauiKey.F8:
+                return DoomKey.F8;
+            case MauiKey.F9:
+                return DoomKey.F9;
+            case MauiKey.F10:
+                return DoomKey.F10;
+            case MauiKey.F11:
+                return DoomKey.F11;
+            case MauiKey.F12:
+                return DoomKey.F12;
+            case MauiKey.NumpadDivide:
+                return DoomKey.Divide;
+            case MauiKey.NumpadMultiply:
+                return DoomKey.Multiply;
+            case MauiKey.NumpadSubtract:
+                return DoomKey.Subtract;
+            case MauiKey.NumpadAdd:
+                return DoomKey.Add;
+            case MauiKey.ShiftLeft:
+                return DoomKey.LShift;
+            case MauiKey.ControlLeft:
+                return DoomKey.LControl;
+            case MauiKey.AltLeft:
+                return DoomKey.LAlt;
+            case MauiKey.ShiftRight:
+                return DoomKey.RShift;
+            case MauiKey.ControlRight:
+                return DoomKey.RControl;
+            case MauiKey.AltRight:
+                return DoomKey.RAlt;
+            case MauiKey.ContextMenu:
+                return DoomKey.Menu;
+            default:
+                return DoomKey.Unknown;
         }
     }
-
 
     public MauiUserInput(Config config, bool useMouse, Func<UiCommand, bool> callbackInputForUi)
     {
@@ -193,8 +238,6 @@ public class MauiUserInput : IUserInput, IDisposable
         _mouse = new VirtualMouse();
         mouseGrabbed = false;
 
-        //todo move this to config static:
-
         if (config.video_highresolution)
         {
             _doomViewport = new SKRect(0, 0, 400, 640);
@@ -203,7 +246,6 @@ public class MauiUserInput : IUserInput, IDisposable
         {
             _doomViewport = new SKRect(0, 0, 200, 320);
         }
-
     }
 
     private bool IsPressed(DoomKey key)
@@ -231,8 +273,10 @@ public class MauiUserInput : IUserInput, IDisposable
         {
             foreach (var mouseButton in keyBinding.MouseButtons)
             {
-                if (mouseButton == DoomMouseButton.Mouse1 && _pressedFire.HasValue) return true;
-                if (mouseButton == DoomMouseButton.Mouse2 && _pressedUse.HasValue) return true;
+                if (mouseButton == DoomMouseButton.Mouse1 && _pressedFire.HasValue)
+                    return true;
+                if (mouseButton == DoomMouseButton.Mouse2 && _pressedUse.HasValue)
+                    return true;
             }
         }
 
@@ -515,7 +559,7 @@ public class MauiUserInput : IUserInput, IDisposable
     private float mouseDeltaX;
     private float mouseDeltaY;
 
-    //we need to simulate keys to control UI Menu with touch gestures
+
 
     void SetMoveLeft(bool value, Doom doom, EventTimestamp currentTime)
     {
@@ -584,7 +628,8 @@ public class MauiUserInput : IUserInput, IDisposable
         }
         if (_pressedUse.Expired(timestamp, 50))
         {
-            _pressedUse = EventTimestamp.Empty; ; //release right mouse button 
+            _pressedUse = EventTimestamp.Empty;
+            ; //release right mouse button 
         }
 
         AutoReleaseKeys(doom, timestamp);
@@ -627,8 +672,6 @@ public class MauiUserInput : IUserInput, IDisposable
         var velocityX = (float)(args.Event.Distance.Velocity.X / scale);
         var velocityY = (float)(args.Event.Distance.Velocity.Y / scale);
 
-        //Debug.WriteLine($"{args.Type} {args.Event.NumberOfTouches} {args.Event.Location.X}");
-
         if (args.Type == TouchActionResult.Panning)
         {
             if (args.Event.NumberOfTouches > 1)
@@ -654,13 +697,11 @@ public class MauiUserInput : IUserInput, IDisposable
 
             if (_doom.IsCapturingMouse)
             {
-                //Debug.WriteLine($"PAN ++ {distance.X} {distance.Y}");
                 _mouse.Position = new Vector2(_mouse.Position.X + distance.X, _mouse.Position.Y + distance.Y);
             }
             else
             {
                 var velocityThreshold = 300;
-                bool vertical = false;
 
                 //up/down keys for menu
                 if (velocityY < -velocityThreshold)
@@ -700,19 +741,6 @@ public class MauiUserInput : IUserInput, IDisposable
             {
                 _panningStartedAt = args.Event.Location;
             }
-
-            //if (args.Event.NumberOfTouches == 2) // two-finger tap to USE or ESC in MENU
-            //{
-            //    if (_doom.IsCapturingMouse)
-            //    {
-            //        _pressedUse = currentTime;
-            //    }
-            //    else
-            //    {
-            //        SetKeyStatus(EventType.KeyDown, DoomKey.Escape, _doom, currentTime);
-            //    }
-            //    return true;
-            //}
         }
 
         if (args.Type == TouchActionResult.Up)
@@ -723,6 +751,12 @@ public class MauiUserInput : IUserInput, IDisposable
             {
                 if (currentTime.Timestamp - _lastDownTime < 500) //tap detected
                 {
+                    // Check for virtual key presses
+                    if (HandleVirtualButtonPress(args.Event.Location, currentTime))
+                    {
+                        return true; // Consume the event
+                    }
+
                     if (_doom.Game.World is { AutoMap.Visible: true })
                     {
                         //close map
@@ -807,15 +841,6 @@ public class MauiUserInput : IUserInput, IDisposable
                                     _pressedFire = currentTime;
                                 }
                             }
-                            //if (!avatarClicked && !weaponClicked)
-                            //{
-                            //    //just clicked bottom UI bar
-                            //    if (!_calbackUi.Invoke(UiCommand.Reset))
-                            //    {
-                            //        SetKeyStatus(EventType.KeyDown, DoomKey.Escape, _doom, currentTime);
-                            //    }
-                            //}
-
                         }
                         else
                         {
@@ -839,6 +864,117 @@ public class MauiUserInput : IUserInput, IDisposable
         return true;
     }
 
+    /// <summary>
+    /// Checks if the touch event falls within the bounds of any virtual key and sets the key status accordingly.
+    /// </summary>
+    /// <param name="touchLocation">The location of the touch event.</param>
+    /// <param name="currentTime">The current timestamp.</param>
+    /// <returns>True if a virtual key was pressed, false otherwise.</returns>
+    private bool HandleVirtualButtonPress(PointF touchLocation, EventTimestamp currentTime)
+    {
+        foreach (var kvp in _virtualKeys)
+        {
+            var key = kvp.Key;
+            var rect = kvp.Value;
+
+            if (rect.Contains(touchLocation.X, touchLocation.Y))
+            {
+                // Key pressed
+                if (key == MauiKey.Space)
+                {
+                    _mouseButton1Held = true; // Set Mouse1 as Held
+                    // Simulate Mouse1 down (fire)
+                    SetKeyStatus(EventType.KeyDown, KeyToDoom(MauiKey.Space), _doom, currentTime);
+                    return true; // Consume the event
+                }
+                else if (key == MauiKey.ControlLeft)
+                {
+                    SetKeyStatus(EventType.KeyDown, KeyToDoom(key), _doom, currentTime);
+                    return true; // Consume the event
+                }
+                else if (key == MauiKey.ArrowLeft)
+                {
+                    _moveLeftHeld = true;
+                    SetKeyStatus(EventType.KeyDown, KeyToDoom(key), _doom, currentTime);
+                    return true;
+                }
+                else if (key == MauiKey.ArrowRight)
+                {
+                    _moveRightHeld = true;
+                    SetKeyStatus(EventType.KeyDown, KeyToDoom(key), _doom, currentTime);
+                    return true;
+                }
+                else if (key == MauiKey.ArrowUp)
+                {
+                    _moveUpHeld = true;
+                    SetKeyStatus(EventType.KeyDown, KeyToDoom(key), _doom, currentTime);
+                    return true;
+                }
+                else if (key == MauiKey.ArrowDown)
+                {
+                    _moveDownHeld = true;
+                    SetKeyStatus(EventType.KeyDown, KeyToDoom(key), _doom, currentTime);
+                    return true;
+                }
+            }
+        }
+
+        return false; // No virtual key pressed
+    }
+    private bool _moveLeftHeld = false;
+    private bool _moveRightHeld = false;
+    private bool _moveUpHeld = false;
+    private bool _moveDownHeld = false;
+    private void HandleVirtualButtonRelease(PointF touchLocation, EventTimestamp currentTime)
+    {
+        foreach (var kvp in _virtualKeys)
+        {
+            var key = kvp.Key;
+            var rect = kvp.Value;
+
+            if (rect.Contains(touchLocation.X, touchLocation.Y))
+            {
+                if (key == MauiKey.Space)
+                {
+                    // Simulate Mouse1 up (fire)
+                    SetKeyStatus(EventType.KeyUp, KeyToDoom(key), _doom, currentTime);
+                    _mouseButton1Held = false; // Reset mouse
+                    return;
+                }
+                else if (key == MauiKey.ControlLeft)
+                {
+                    SetKeyStatus(EventType.KeyUp, KeyToDoom(key), _doom, currentTime);
+                    return;
+                }
+                else if (key == MauiKey.ArrowLeft)
+                {
+                    SetKeyStatus(EventType.KeyUp, KeyToDoom(key), _doom, currentTime);
+                    _moveLeftHeld = false;
+                    return;
+                }
+                else if (key == MauiKey.ArrowRight)
+                {
+                    SetKeyStatus(EventType.KeyUp, KeyToDoom(key), _doom, currentTime);
+                    _moveRightHeld = false;
+                    return;
+                }
+                else if (key == MauiKey.ArrowUp)
+                {
+                    SetKeyStatus(EventType.KeyUp, KeyToDoom(key), _doom, currentTime);
+                    _moveUpHeld = false;
+                    return;
+                }
+                else if (key == MauiKey.ArrowDown)
+                {
+                    SetKeyStatus(EventType.KeyUp, KeyToDoom(key), _doom, currentTime);
+                    _moveDownHeld = false;
+                    return;
+                }
+            }
+        }
+    }
+
+    private bool _mouseButton1Held = false;
     public void SelectWeapon(int number)
     {
         var currentTime = new EventTimestamp(_lastFrame);
@@ -868,6 +1004,16 @@ public class MauiUserInput : IUserInput, IDisposable
     public void SetKeyStatus(EventType type, MauiKey key, Doom doom, EventTimestamp currentTime)
     {
         SetKeyStatus(type, KeyToDoom(key), doom, currentTime);
+    }
+
+    /// <summary>
+    /// Add a virtual key's rectangle for touch detection.
+    /// </summary>
+    /// <param name="key">The MauiKey associated with the virtual button.</param>
+    /// <param name="rect">The SKRect representing the button's area.</param>
+    public void AddVirtualKey(MauiKey key, SKRect rect)
+    {
+        _virtualKeys[key] = rect;
     }
 
     /// <summary>
@@ -949,4 +1095,3 @@ public class MauiUserInput : IUserInput, IDisposable
         public PointF Position { get; set; }
     }
 }
-
