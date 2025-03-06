@@ -1,9 +1,6 @@
 ﻿using DrawnUi.Maui.Draw;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Orbit.Input;
+using KeyboardManager = Orbit.Input.KeyboardManager;
 
 namespace DrawnUi.Maui.Game
 {
@@ -18,14 +15,14 @@ namespace DrawnUi.Maui.Game
 
         public MauiGame()
         {
-            KeyboardManager.KeyDown += OnKeyboardDownEvent;
-            KeyboardManager.KeyUp += OnKeyboardUpEvent;
+            KeyboardManager.Current.KeyDown += OnKeyboardDownEvent;
+            KeyboardManager.Current.KeyUp += OnKeyboardUpEvent;
         }
 
         ~MauiGame()
         {
-            KeyboardManager.KeyUp -= OnKeyboardUpEvent;
-            KeyboardManager.KeyDown -= OnKeyboardDownEvent;
+            KeyboardManager.Current.KeyUp -= OnKeyboardUpEvent;
+            KeyboardManager.Current.KeyDown -= OnKeyboardDownEvent;
         }
 
         protected virtual void OnResumed()
@@ -135,20 +132,20 @@ namespace DrawnUi.Maui.Game
         /// Do not use directly. It's public to be able to send keys to game manually if needed.
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="key"></param>
-        public void OnKeyboardDownEvent(object sender, MauiKey key)
+        /// <param name="eventArgs"></param>
+        public void OnKeyboardDownEvent(object sender, KeyboardKeyChangeEventArgs eventArgs)
         {
-            OnKeyDown(key);
+            OnKeyDown((MauiKey)eventArgs.Key); // TODO: We don't need both?
         }
 
         /// <summary>
         /// Do not use directly. It's public to be able to send keys to game manually if needed.
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="key"></param>
-        public void OnKeyboardUpEvent(object sender, MauiKey key)
+        /// <param name="eventArgs"></param>
+        public void OnKeyboardUpEvent(object sender, KeyboardKeyChangeEventArgs eventArgs)
         {
-            OnKeyUp(key);
+            OnKeyUp((MauiKey)eventArgs.Key);// TODO: We don't need both?
         }
 
 
