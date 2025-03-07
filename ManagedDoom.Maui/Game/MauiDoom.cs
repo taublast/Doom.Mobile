@@ -81,16 +81,13 @@ public class MauiDoom : MauiGame
         return false;
     }
 
+ 
     /// <summary>
     /// Paint the game, invoked every frame
     /// </summary>
-    /// <param name="context"></param>
-    /// <param name="destination"></param>
-    /// <param name="scale"></param>
-    /// <param name="arguments"></param>
-    protected override void Paint(SkiaDrawingContext context, SKRect destination, float scale, object arguments)
+    protected override void Paint(DrawingContext ctx)
     {
-        //base.Paint(ctx, destination, scale, arguments); - will not draw background color/gradient in this case
+        // base.Paint(ctx); - will not draw background color/gradient in this case
 
         frameCount++;
 
@@ -114,10 +111,10 @@ public class MauiDoom : MauiGame
         }
 
         //render doom
-        _video.Render(context.Canvas, destination, _doom, frameFrac);
+        _video.Render(ctx.Context.Canvas, ctx.Destination, _doom, frameFrac);
 
         //render custom ui
-        var drawnChildrenCount = DrawViews(context, DrawingRect, scale);//GetDoomScale(DrawingRect, scale));
+        var drawnChildrenCount = DrawViews(ctx);//GetDoomScale(DrawingRect, scale));
     }
 
 
@@ -128,7 +125,7 @@ public class MauiDoom : MauiGame
     /// <param name="context"></param>
     /// <param name="destination"></param>
     /// <param name="scale"></param>
-    void Init(SkiaDrawingContext context, SKRect destination, float scale)
+    void Init(DrawingContext context)
     {
         frameCount = -1;
 
@@ -142,7 +139,7 @@ public class MauiDoom : MauiGame
 
         var targetFps = 35 * _config.video_fpsscale;  //todo apply to gameloop?
 
-        _video = new MauiVideo(_config, _content, context);
+        _video = new MauiVideo(_config, _content, context.Context);
 
         if (!args.nosound.Present && MauiProgram.UseSound)
         {
@@ -180,19 +177,16 @@ public class MauiDoom : MauiGame
     /// <summary>
     /// Initialise the game when ready to draw, one time
     /// </summary>
-    /// <param name="context"></param>
-    /// <param name="destination"></param>
-    /// <param name="scale"></param>
-    protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+    protected override void Draw(DrawingContext context)
     {
         if (!_initialized)
         {
             _initialized = true;
-            Init(context, destination, scale);
+            Init(context);
             StartLoop();
         }
 
-        base.Draw(context, destination, scale);
+        base.Draw(context);
     }
 
     public override void OnDisposing()
