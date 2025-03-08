@@ -10,7 +10,10 @@ namespace ManagedDoom.Maui
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            // Use Xaml or code-behind
+            // Using code-behind here to enjoy C# HotReload
+            MainPage = new MainPageCode();
+            //MainPage = new MainPage();
         }
 
         protected override void OnStart()

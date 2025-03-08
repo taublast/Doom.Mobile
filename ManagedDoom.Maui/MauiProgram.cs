@@ -13,6 +13,14 @@ namespace ManagedDoom.Maui
         public static bool KeepAspectRatio = true;
 
         /// <summary>
+        /// Optional HUD for simulating some the keys.
+        /// Mainly for a demo purpose to demonstrate the way to show a HUD.
+        /// Might want to enable for smart watch..
+        /// If true then Keypad will be shown while playing.
+        /// </summary>
+        public static bool ShowKeys = false;
+
+        /// <summary>
         /// Use sound or not
         /// </summary>
         public static bool UseSound = true;

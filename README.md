@@ -13,6 +13,12 @@ Uses a modified C# Doom engine from [ManagedDoom](https://github.com/sinshu/mana
 * Custom UI to select weapons on mobile, tap left-bottom corner to open.
 * Multi-channel stereo sound working on all platforms.
 
+## Whats New
+
+* Sound fixes for Android, using new sound nuget
+* Added `MainPageCode` to create UI from code-behind to profit from C# HotReload
+* Added example for displaying custom HUD while playing, enable with `MauiProgram.ShowKeys`
+
 ## How To Play
 
 ### Setup

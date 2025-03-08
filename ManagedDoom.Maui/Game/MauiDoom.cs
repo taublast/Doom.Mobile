@@ -1,4 +1,5 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using AppoMobi.Maui.Gestures;
+using DrawnUi.Maui.Draw;
 using DrawnUi.Maui.Game;
 using Plugin.Maui.Audio;
 using SKRect = SkiaSharp.SKRect;
@@ -21,7 +22,8 @@ public class MauiDoom : MauiGame
     private int frameCount;
     private bool _initialized;
 
-    protected WeaponsView _uiSelectWeapon;
+    protected WeaponsView _uiSelectWeapon; //for selecting weaps
+    protected Keypad? _uiHud; //will show while playing if enabled in MauiProgram.cs
 
     public MauiDoom()
     {
@@ -164,6 +166,13 @@ public class MauiDoom : MauiGame
         _uiSelectWeapon.IsVisible = false;
         this.AddSubView(_uiSelectWeapon);
 
+        if (MauiProgram.ShowKeys)
+        {
+            _uiHud = new Keypad(this);
+            SetHudVisibility();
+            this.AddSubView(_uiHud);
+        }
+
         fpsScale = args.timedemo.Present ? 1 : _config.video_fpsscale; //2
         frameCount = -1;
     }
@@ -172,6 +181,18 @@ public class MauiDoom : MauiGame
     {
         StopLoop();
         _initialized = false;
+    }
+
+    void SetHudVisibility()
+    {
+        if (_uiHud != null)
+        {
+            var value = _doom.IsPlaying;
+            if (_uiHud.IsVisible != value)
+            {
+                _uiHud.IsVisible = value;
+            }
+        }
     }
 
     /// <summary>
@@ -186,12 +207,16 @@ public class MauiDoom : MauiGame
             StartLoop();
         }
 
+        SetHudVisibility();
+
         base.Draw(context);
     }
 
     public override void OnDisposing()
     {
         base.OnDisposing();
+
+        _input?.Dispose();
 
         OnClose();
     }
@@ -214,7 +239,7 @@ public class MauiDoom : MauiGame
             disposeVideo.Dispose();
         _video = null;
 
-        _config.Save(PlatformHelpers.ConfigUtilities.GetConfigPath());
+        _config?.Save(PlatformHelpers.ConfigUtilities.GetConfigPath());
     }
 
     #region INPUT
@@ -226,7 +251,7 @@ public class MauiDoom : MauiGame
     public override void OnKeyDown(MauiKey key)
     {
         var currentTime = new EventTimestamp(frameCount);
-        _input.SetKeyStatus(EventType.KeyDown, key, _doom, currentTime);
+        _input?.SetKeyStatus(EventType.KeyDown, key, _doom, currentTime);
     }
 
     /// <summary>
@@ -241,12 +266,28 @@ public class MauiDoom : MauiGame
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        var consumed = _input.ProcessGestures(args, apply,
+
+        //send to children first..
+        bool passedToChildren = false;
+        ISkiaGestureListener PassToChildren()
+        {
+            passedToChildren = true;
+            return base.ProcessGestures(args, apply);
+        }
+
+         ISkiaGestureListener consumed = PassToChildren();
+        if (consumed != null && args.Type != TouchActionResult.Up)
+        {
+            return consumed;
+        }
+
+        //now can pass to input implementation
+        var handled = _input.ProcessGestures(args, apply,
             RenderingScale, DrawingRect, _video.Viewport, frameCount, _config);
-        if (consumed)
+        if (handled)
             return this;
 
-        return base.ProcessGestures(args, apply);
+        return consumed;
     }
 
     public enum UiCommand
