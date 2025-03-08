@@ -264,7 +264,7 @@ namespace ManagedDoom.Maui.Game
                     var channel = soundMixer.Channels[i];
                     SetParam(channel, info);
                     channel.Speed = GetPitch(info.Type, info.Reserved);
-                    soundMixer.Play(i, buffers[(int)info.Reserved], loop: false);
+                    soundMixer.Play(i, loop: false);
                     info.Playing = info.Reserved;
                     info.Reserved = Sfx.NONE;
                 }
@@ -280,7 +280,7 @@ namespace ManagedDoom.Maui.Game
 
                 uiChannel.Volume = masterVolumeDecay;
                 uiChannel.SetSource(buffers[(int)uiReserved].GetAudioStream());
-                soundMixer.Play(channelCount - 1, buffers[(int)uiReserved], loop: false);
+                soundMixer.Play(channelCount - 1, loop: false);
                 uiReserved = Sfx.NONE;
             }
 

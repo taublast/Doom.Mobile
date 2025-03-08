@@ -28,7 +28,6 @@ namespace ManagedDoom.Maui
 #if DEBUG_MOBILE //don't need this to compile, it's for development to simulate mobile screen on desktop
                 .UseDrawnUi(new()
                 {
-                    UseDesktopKeyboard = true,
                     DesktopWindow = new()
                     {
                         Width = 400,
@@ -47,7 +46,7 @@ namespace ManagedDoom.Maui
                       Height = 400,
                   }
               });
-            IsMobile = false;//DeviceInfo.Current.Idiom == DeviceIdiom.Tablet || DeviceInfo.Current.Idiom == DeviceIdiom.Phone;
+            IsMobile = DeviceInfo.Current.Idiom == DeviceIdiom.Tablet || DeviceInfo.Current.Idiom == DeviceIdiom.Phone;
 #endif
 
             builder.ConfigureFonts(fonts =>
