@@ -20,6 +20,7 @@ namespace ManagedDoom.Maui.Game
 
             public KeypadButton(IMauiGame game, string caption, MauiKey key, bool alt = false)
             {
+                UseCache = SkiaCacheType.Image;
                 CornerRadius = BtnCorners;
                 WidthRequest = BtnSize;
                 LockRatio = 1; //make height same size
@@ -29,7 +30,6 @@ namespace ManagedDoom.Maui.Game
                 Content =
                     new SkiaLayout()
                     {
-                        UseCache = SkiaCacheType.Image,
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill,
                         Children = new List<SkiaControl>()
