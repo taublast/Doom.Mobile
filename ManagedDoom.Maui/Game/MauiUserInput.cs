@@ -596,11 +596,6 @@ public class MauiUserInput : IUserInput, IDisposable
     private int panningFingers;
 
     /// <summary>
-    /// Fixing error in gestures nuget TODO fix there
-    /// </summary>
-    private PointF _panningStartedAt;
-
-    /// <summary>
     /// Beware this can be invoked several times per frame.
     /// </summary>
     /// <param name="args"></param>
@@ -646,9 +641,7 @@ public class MauiUserInput : IUserInput, IDisposable
             panningFingers = 1;
             _wasPanning = true;
 
-            var distance = new PointF(args.Event.Location.X - _panningStartedAt.X,
-                 args.Event.Location.Y - _panningStartedAt.Y);
-            _panningStartedAt = args.Event.Location;
+            var distance = args.Event.Distance.Delta;
 
             if (_doom.IsCapturingMouse)
             {
@@ -693,24 +686,6 @@ public class MauiUserInput : IUserInput, IDisposable
             _wasPanning = false;
             _isPressed = true;
             _lastDownTime = currentTime.Timestamp;
-
-            if (args.Event.NumberOfTouches == 1)
-            {
-                _panningStartedAt = args.Event.Location;
-            }
-
-            //if (args.Event.NumberOfTouches == 2) // two-finger tap to USE or ESC in MENU
-            //{
-            //    if (_doom.IsCapturingMouse)
-            //    {
-            //        _pressedUse = currentTime;
-            //    }
-            //    else
-            //    {
-            //        SetKeyStatus(EventType.KeyDown, DoomKey.Escape, _doom, currentTime);
-            //    }
-            //    return true;
-            //}
         }
 
         if (args.Type == TouchActionResult.Up)
@@ -886,6 +861,8 @@ public class MauiUserInput : IUserInput, IDisposable
         {
             _moveDown = false;
         }
+
+        /*
         if (AutoReleaseKey(DoomKey.Left, doom, 200, currentTime))
         {
             _moveLeft = false;
@@ -894,6 +871,7 @@ public class MauiUserInput : IUserInput, IDisposable
         {
             _moveRight = false;
         }
+        */
 
         AutoReleaseKey(_config.key_use.Keys[0], doom, 30, currentTime);
 

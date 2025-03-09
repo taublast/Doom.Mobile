@@ -4,10 +4,22 @@ using KeyboardManager = Orbit.Input.KeyboardManager;
 
 namespace DrawnUi.Maui.Game
 {
+
+    public interface IMauiGame
+    {
+        void OnKeyDown(MauiKey key);
+        void OnKeyUp(MauiKey key);
+
+        void Pause();
+        void Resume();
+        void StopLoop();
+        void StartLoop(int delayMs = 0);
+    }
+
     /// <summary>
     /// Base class for implementing a game. StartLoop, StopLoop, override GameLoop(..) etc.
     /// </summary>
-    public class MauiGame : SkiaLayout
+    public class MauiGame : SkiaLayout, IMauiGame
     {
 
         private ActionOnTickAnimator _appLoop;

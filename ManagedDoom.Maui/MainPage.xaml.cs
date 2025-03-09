@@ -21,5 +21,4 @@ namespace ManagedDoom.Maui
             }
         }
     }
-
 }

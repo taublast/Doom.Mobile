@@ -18,12 +18,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="doom2.wad" />
+    <None Remove="freedoom2.wad" />
     <None Remove="TimGM6mb.sf2" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="doom2.wad">
+    <EmbeddedResource Include="freedoom2.wad">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="TimGM6mb.sf2">

@@ -444,6 +444,8 @@ namespace ManagedDoom
             return UpdateResult.None;
         }
 
+        public bool IsPlaying => currentState == DoomState.Game && !menu.Active;
+
         private void CheckMouseState()
         {
             bool mouseShouldBeGrabbed;
@@ -457,7 +459,7 @@ namespace ManagedDoom
             }
             else
             {
-                mouseShouldBeGrabbed = currentState == DoomState.Game && !menu.Active;
+                mouseShouldBeGrabbed = IsPlaying;
             }
 
             if (IsCapturingMouse)
