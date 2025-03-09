@@ -19,10 +19,12 @@ namespace DrawnUi.Maui.Game
             KeyboardManager.Current.KeyUp += OnKeyboardUpEvent;
         }
 
-        ~MauiGame()
+        public override void OnDisposing()
         {
-            KeyboardManager.Current.KeyUp -= OnKeyboardUpEvent;
-            KeyboardManager.Current.KeyDown -= OnKeyboardDownEvent;
+            KeyboardManager.Current.KeyDown -= OnKeyboardUpEvent;
+            KeyboardManager.Current.KeyUp -= OnKeyboardDownEvent;
+
+            base.OnDisposing();
         }
 
         protected virtual void OnResumed()
