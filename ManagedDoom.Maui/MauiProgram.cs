@@ -1,6 +1,7 @@
 ﻿//#define DEBUG_MOBILE
 using DrawnUi.Maui.Draw;
 using Microsoft.Extensions.Logging;
+using Orbit.Input;
 using Plugin.Maui.Audio;
 
 namespace ManagedDoom.Maui
@@ -31,10 +32,10 @@ namespace ManagedDoom.Maui
             builder
                 .UseMauiApp<App>()
                 .AddAudio()
+                .UseOrbitInput()
 #if DEBUG_MOBILE //don't need this to compile, it's for development to simulate mobile screen on desktop
                 .UseDrawnUi(new()
                 {
-                    UseDesktopKeyboard = true,
                     DesktopWindow = new()
                     {
                         Width = 400,
@@ -46,7 +47,6 @@ namespace ManagedDoom.Maui
 #else
               .UseDrawnUi(new()
               {
-                  UseDesktopKeyboard = true,
                   MobileIsFullscreen = true,
                   DesktopWindow = new()
                   {

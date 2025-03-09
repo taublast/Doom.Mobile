@@ -70,6 +70,7 @@ public class MauiVideo : IVideo, IDisposable
 
     public void Render(SKCanvas canvas, SKRect destination, Doom doom, Fixed frameFrac)
     {
+        //if you have problems with System.Threadig.Tasks.Parellel
         if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.DeviceType == DeviceType.Physical)
         {
             DrawScreen.Optimize = false;
