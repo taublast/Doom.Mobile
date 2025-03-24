@@ -65,15 +65,10 @@
 	<ItemGroup>
     <!--can replace this with usual plugin if PR is merged-->
     <PackageReference Include="AppoMobi.Preview.Plugin.Maui.Audio" Version="3.0.2.1-pre1" />
-		<PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.4.0.1" />
+		<PackageReference Include="DrawnUi.Maui.Game" Version="1.4.0.3-pre" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.22" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <!--<ProjectReference Include="..\..\DrawnUi.Maui\src\Engine\Maui\DrawnUi.Maui.csproj" />-->
-    <!--<ProjectReference Include="..\..\Plugin.Maui.Audio\src\Plugin.Maui.Audio\Plugin.Maui.Audio.csproj" />-->
-  </ItemGroup>
 
   <ItemGroup>
 	  <ProjectReference Include="..\ManagedDoom.Shared\ManagedDoom.Shared.csproj" />

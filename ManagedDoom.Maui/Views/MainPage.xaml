@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<draw:DrawnUiBasePage
+<app:MyPage
     x:Class="ManagedDoom.Maui.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -35,4 +35,4 @@
         </draw:SkiaLayout>
     </draw:Canvas>
 
-</draw:DrawnUiBasePage>
+</app:MyPage>

@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using UIKit;
 
 namespace ManagedDoom.Maui
 {
@@ -7,7 +8,4 @@ namespace ManagedDoom.Maui
     {
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
-
-
-
 }

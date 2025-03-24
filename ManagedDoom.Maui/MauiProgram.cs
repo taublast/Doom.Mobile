@@ -1,5 +1,6 @@
 ﻿//#define DEBUG_MOBILE
 using DrawnUi.Maui.Draw;
+using DrawnUi.Maui.Views;
 using Microsoft.Extensions.Logging;
 using Plugin.Maui.Audio;
 
@@ -62,6 +63,13 @@ namespace ManagedDoom.Maui
                     fonts.AddFont("AmazDoomRight.ttf", "FontGame");
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                })
+                .ConfigureMauiHandlers(handlers =>
+                {
+#if IOS
+                    //to force Home indicator hidden
+                    handlers.AddHandler<MyPage, MyPageHandler>();
+#endif
                 });
 
             //

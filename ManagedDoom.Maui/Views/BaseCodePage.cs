@@ -7,7 +7,7 @@ namespace ManagedDoom.Maui;
 /// <summary>
 /// This is to support code-behind c# HotReload with ease
 /// </summary>
-public class BaseCodePage : ContentPage, IDisposable
+public class BaseCodePage : MyPage, IDisposable
 {
 
     public BaseCodePage()
