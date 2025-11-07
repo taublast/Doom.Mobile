@@ -1,8 +1,8 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Infrastructure;
+﻿using DrawnUi.Draw;
 using ManagedDoom.Video;
 using SkiaSharp;
 using System.Runtime.InteropServices;
+using DrawnUi.Infrastructure;
 using SKCanvas = SkiaSharp.SKCanvas;
 using SKFilterQuality = SkiaSharp.SKFilterQuality;
 using SKPaint = SkiaSharp.SKPaint;
@@ -144,7 +144,7 @@ public class MauiVideo : IVideo, IDisposable
                 adjustedY + destination.Width);
         }
 
-        _viewportClipped = SkiaImage.CalculateDisplayRect(destination, viewport.Height, viewport.Width,
+        _viewportClipped = SkiaSvg.CalculateDisplayRect(destination, viewport.Height, viewport.Width,
             DrawImageAlignment.Center, DrawImageAlignment.Center);
 
         canvas.Save();

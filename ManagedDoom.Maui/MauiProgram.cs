@@ -1,6 +1,5 @@
 ﻿//#define DEBUG_MOBILE
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Views;
+using DrawnUi.Draw;
 using Microsoft.Extensions.Logging;
 using Plugin.Maui.Audio;
 

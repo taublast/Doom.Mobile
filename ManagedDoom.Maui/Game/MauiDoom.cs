@@ -1,8 +1,7 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Game;
+using DrawnUi.Draw;
+using DrawnUi.Gaming;
 using Plugin.Maui.Audio;
-using SKRect = SkiaSharp.SKRect;
 
 namespace ManagedDoom.Maui.Game;
 

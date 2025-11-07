@@ -15,10 +15,7 @@ Uses a modified C# Doom engine from [ManagedDoom](https://github.com/sinshu/mana
 
 ## Whats New
 
-* Latest DrawnUI nuget for fluid game update
-* Sound fixes for Android, using new sound nuget
-* Added `MainPageCode` to create UI from code-behind to profit from C# HotReload
-* Added example for displaying custom HUD while playing, enable with `MauiProgram.ShowKeys`
+* Updated with latest nugets
 
 ## How To Play
 

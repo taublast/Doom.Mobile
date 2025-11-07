@@ -1,6 +1,6 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Game;
+﻿using DrawnUi.Draw;
 using AppoMobi.Maui.Gestures;
+using DrawnUi.Gaming;
 
 namespace ManagedDoom.Maui.Game
 {
@@ -27,7 +27,8 @@ namespace ManagedDoom.Maui.Game
                 BackgroundColor = BtnColor;
                 Padding = 0;
 
-                Content =
+                Children = new List<SkiaControl>()
+                {
                     new SkiaLayout()
                     {
                         HorizontalOptions = LayoutOptions.Fill,
@@ -55,8 +56,11 @@ namespace ManagedDoom.Maui.Game
                                 VerticalOptions = LayoutOptions.Center
                             }
                         }
-                    };
-                
+                    }
+                };
+
+
+
                 OnGestures = (parameters, info) =>
                 {
                     if (game != null)
@@ -123,7 +127,7 @@ namespace ManagedDoom.Maui.Game
                     }
 
                 };
-;
+                ;
             }
             catch (Exception e)
             {
@@ -131,7 +135,7 @@ namespace ManagedDoom.Maui.Game
             }
         }
 
-       
+
 
     }
 }

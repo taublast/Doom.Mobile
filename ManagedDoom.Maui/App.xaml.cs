@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using static ManagedDoom.CommandLineArgs;
 
 namespace ManagedDoom.Maui

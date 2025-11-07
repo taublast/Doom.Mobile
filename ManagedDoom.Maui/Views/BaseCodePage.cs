@@ -1,6 +1,6 @@
-﻿using DrawnUi.Maui.Controls;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Views;
+﻿ 
+using DrawnUi.Draw;
+ 
 
 namespace ManagedDoom.Maui;
 

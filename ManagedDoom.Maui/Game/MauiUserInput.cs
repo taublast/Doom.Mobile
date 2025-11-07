@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using ManagedDoom.UserInput;
 using SkiaSharp;
 using System.Diagnostics;

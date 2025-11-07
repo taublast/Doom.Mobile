@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Game;
-using DrawnUi.Maui.Infrastructure.Enums;
-using DrawnUi.Maui.Views;
+﻿using DrawnUi.Draw;
+using DrawnUi.Gaming;
+using DrawnUi.Infrastructure.Enums;
+using DrawnUi.Views;
 using ManagedDoom.Maui.Game;
 
 namespace ManagedDoom.Maui;
@@ -26,7 +26,7 @@ public class MainPageCode : BaseCodePage
         {
             UpdateMode = UpdateMode.Constant,
             Gestures = GesturesMode.Lock,
-            HardwareAcceleration = HardwareAccelerationMode.Enabled,
+            RenderingMode = RenderingModeType.Accelerated,
             VerticalOptions = LayoutOptions.Fill,
             HorizontalOptions = LayoutOptions.Fill,
             BackgroundColor = Colors.Black,
@@ -39,7 +39,7 @@ public class MainPageCode : BaseCodePage
             .WithChildren(
 
                 new MauiDoom()
-                    .Adjust((c) =>
+                    .Adapt((c) =>
                     {
                         _game = c;
                     }),

@@ -13,7 +13,7 @@
     <draw:Canvas
         x:Name="GameCanvas"
         Gestures="Enabled"
-        HardwareAcceleration="Enabled"
+        RenderingMode="Accelerated"
         HorizontalOptions="Fill"
         UpdateMode="Constant"
         VerticalOptions="Fill">
