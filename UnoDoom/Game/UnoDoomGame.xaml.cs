@@ -51,9 +51,9 @@ public partial class UnoDoomGame : UserControl
         this.KeyUp += UnoDoomGame_KeyUp;
     }
 
-    private void UnoDoomGame_Loaded(object sender, RoutedEventArgs e)
+    private async void UnoDoomGame_Loaded(object sender, RoutedEventArgs e)
     {
-        InitializeGame();
+        await InitializeGameAsync();
         StartGameLoop();
     }
 
@@ -63,13 +63,18 @@ public partial class UnoDoomGame : UserControl
         CleanupGame();
     }
 
-    private void InitializeGame()
+    private async Task InitializeGameAsync()
     {
         if (_initialized)
             return;
 
         try
         {
+#if __WASM__
+            // For WebAssembly, prepare assets first
+            await ConfigUtilities.PrepareAssetsAsync();
+#endif
+
             PlatformHelpers.ConfigUtilities = new ConfigUtilities();
 
             args = new CommandLineArgs(new string[] { });
@@ -158,7 +163,7 @@ public partial class UnoDoomGame : UserControl
 
     private void UnoDoomGame_KeyDown(object sender, KeyRoutedEventArgs e)
     {
-        if (_doom == null || !_initialized)
+        if (_doom == null || _input == null || !_initialized)
             return;
 
         var doomKey = UnoUserInput.VirtualKeyToDoom(e.Key);
@@ -171,7 +176,7 @@ public partial class UnoDoomGame : UserControl
 
     private void UnoDoomGame_KeyUp(object sender, KeyRoutedEventArgs e)
     {
-        if (_doom == null || !_initialized)
+        if (_doom == null || _input == null || !_initialized)
             return;
 
         var doomKey = UnoUserInput.VirtualKeyToDoom(e.Key);

@@ -15,6 +15,37 @@ public class ConfigUtilities : IConfigUtilities
         "freedoom1.wad"
     };
 
+#if __WASM__
+    private static string _localWadPath;
+
+    /// <summary>
+    /// Prepares assets for WebAssembly by downloading them via HTTP
+    /// </summary>
+    public static async Task PrepareAssetsAsync()
+    {
+        var localFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Wads");
+        foreach (var name in iwadNames)
+        {
+            var assetPath = $"Assets/{name}";
+            try
+            {
+                var fileFromAssets = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{assetPath}"));
+                if (fileFromAssets != null)
+                {
+                    // Copy to local folder
+                    var copiedFile = await fileFromAssets.CopyAsync(localFolder, name, NameCollisionOption.ReplaceExisting);
+                    Console.WriteLine($"Copied IWAD {name} to local folder.");
+                    _localWadPath = copiedFile.Path;
+                }
+            }
+            catch
+            {
+                // Ignore missing assets
+            }
+        }
+    }
+#endif
+
     public Config GetConfig()
     {
         var configPath = GetConfigPath();
@@ -45,6 +76,11 @@ public class ConfigUtilities : IConfigUtilities
 
     public string GetDefaultIwadPath()
     {
+#if __WASM__
+        return _localWadPath;
+
+        throw new Exception("No IWAD was found! Make sure to call PrepareAssetsAsync() first.");
+#else
         var exeDirectory = GetExeDirectory();
         foreach (var name in iwadNames)
         {
@@ -63,6 +99,7 @@ public class ConfigUtilities : IConfigUtilities
         }
 
         throw new Exception("No IWAD was found!");
+#endif
     }
 
     public bool IsIwad(string path)
