@@ -24,6 +24,7 @@ public class MauiVideo : IVideo, IDisposable
     private readonly SKPaint _paint;
     private SKBitmap _texture;
     private SKBitmap _indexedTexture;  // 8-bit indexed texture for GPU palette conversion
+    private GCHandle _screenDataHandle; // Handle for pinned screen data
     private SKBitmap _paletteTexture;  // 256x1 RGBA palette texture
     private uint[] _currentPalette;    // Track current palette to avoid unnecessary updates
 
@@ -51,7 +52,11 @@ public class MauiVideo : IVideo, IDisposable
             _texture = new SKBitmap(_textureWidth, _textureHeight, SKColorType.Rgba8888, SKAlphaType.Premul);
 
             // Create indexed texture for GPU palette conversion (matches renderer.Screen dimensions, but transposed for Column-Major data)
-            _indexedTexture = new SKBitmap(renderer.Screen.Height, renderer.Screen.Width, SKColorType.Gray8, SKAlphaType.Opaque);
+            // Zero-copy optimization: Pin the screen data and use InstallPixels
+            _screenDataHandle = GCHandle.Alloc(renderer.Screen.Data, GCHandleType.Pinned);
+            _indexedTexture = new SKBitmap();
+            var info = new SKImageInfo(renderer.Screen.Height, renderer.Screen.Width, SKColorType.Gray8, SKAlphaType.Opaque);
+            _indexedTexture.InstallPixels(info, _screenDataHandle.AddrOfPinnedObject(), info.RowBytes);
             
             // Create palette texture (256x1 RGBA)
             _paletteTexture = new SKBitmap(256, 1, SKColorType.Rgba8888, SKAlphaType.Premul);
@@ -79,7 +84,7 @@ public class MauiVideo : IVideo, IDisposable
 
     public void Render(SKCanvas canvas, SKRect destination, Doom doom, Fixed frameFrac)
     {
-        if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.DeviceType == DeviceType.Physical)
+        if (false) 
         {
             DrawScreen.Optimize = false;
             Render(doom, frameFrac);
@@ -92,7 +97,7 @@ public class MauiVideo : IVideo, IDisposable
         }
         else
         {
-            //use multi-threading
+            //will use shader now
             RenderUnsafer(doom, frameFrac); // _texture prepared inside
         }
 
@@ -237,10 +242,12 @@ public class MauiVideo : IVideo, IDisposable
         // GPU path: Upload indexed data and palette to textures
         UpdatePaletteTexture(colors);
         
-        // Copy indexed screen data to indexed texture, handling potential row padding
-        CopyIndexedDataToTexture(renderer.Screen.Data, renderer.Screen.Height, renderer.Screen.Width);
+        // Zero-copy optimization: Data is already pinned and linked to _indexedTexture
+        // We just need to notify Skia that pixels changed if needed (usually implicit for InstallPixels)
+        // No copy needed! _indexedTexture reads directly from renderer.Screen.Data
     }
 
+    /*
     private unsafe void CopyIndexedDataToTexture(byte[] screenData, int width, int height)
     {
         var info = _indexedTexture.Info;
@@ -268,6 +275,7 @@ public class MauiVideo : IVideo, IDisposable
             }
         }
     }
+    */
 
     public void RenderWipeUnsafe(Doom doom)
     {
@@ -301,8 +309,8 @@ public class MauiVideo : IVideo, IDisposable
         // GPU path: Upload indexed data and palette to textures
         UpdatePaletteTexture(renderer.palette[0]);
         
-        // Copy indexed screen data to indexed texture
-        CopyIndexedDataToTexture(renderer.Screen.Data, renderer.Screen.Height, renderer.Screen.Width);
+        // Zero-copy optimization: Data is already pinned
+        // No copy needed!
     }
 
     public void Render(Doom doom, Fixed frameFrac)
@@ -454,6 +462,10 @@ public class MauiVideo : IVideo, IDisposable
         _texture = null;
         _indexedTexture?.Dispose();
         _indexedTexture = null;
+        if (_screenDataHandle.IsAllocated)
+        {
+            _screenDataHandle.Free();
+        }
         _paletteTexture?.Dispose();
         _paletteTexture = null;
         _paint?.Dispose();
