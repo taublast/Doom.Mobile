@@ -30,6 +30,16 @@
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
+
+    <!--Tune Android-->
+    <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
+    <AndroidLargeHeap>true</AndroidLargeHeap>
+    <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+    
+    <!--To use Parallel on iOS real device-->
+    <MtouchExtraArgs>--interpreter</MtouchExtraArgs>
+    <UseInterpreter>True</UseInterpreter>
+    
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
 
