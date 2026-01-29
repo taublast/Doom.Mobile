@@ -15,7 +15,7 @@ Uses a modified C# Doom engine from [ManagedDoom](https://github.com/sinshu/mana
 
 ## Whats New
 
-* Implemented SKSL shaders for palette conversions, significantly increasing FPS!
+* Implemented SKSL shaders for palette conversions
 * Updated with latest nugets
 
 ## How To Play
