@@ -1,0 +1,35 @@
+// Palette-based indexed color conversion shader for DOOM
+// Converts 8-bit indexed texture to RGBA using a 256-color palette texture
+
+uniform float2 iResolution;      // Viewport resolution (pixels)
+uniform float2 iImageResolution; // Indexed texture resolution (pixels)
+uniform shader iImage1;          // Indexed texture (8-bit grayscale/alpha)
+uniform shader iPalette;         // Palette texture (256x1 RGBA)
+uniform float2 iOffset;          // Top-left corner of DrawingRect
+
+half4 main(float2 fragCoord) 
+{
+    // Calculate the coordinate transform from screen space to indexed texture pixel space
+    // Texture is 200x320 (Portrait/Transposed relative to screen)
+    // Viewport is also 200x320.
+    // We map straight 1:1 without swizzling.
+    float2 renderingScale = iImageResolution.xy / iResolution.xy;
+    float2 inputCoord = (fragCoord - iOffset) * renderingScale;
+    
+    // Sample the indexed texture directly
+    half4 indexedSample = iImage1.eval(inputCoord);
+    
+    // Extract the index value - Gray8 format stores 0-255 as normalized 0.0-1.0 in red channel
+    float indexNormalized = indexedSample.r;
+    
+    // Convert normalized value back to palette index (0-255)
+    // Then use as pixel coordinate to lookup in 256x1 palette texture
+    // Add 0.5 to sample from pixel center
+    float paletteIndex = indexNormalized * 255.0;
+    float2 paletteCoord = float2(paletteIndex + 0.5, 0.5);
+    
+    // Sample the palette texture at the pixel coordinate
+    half4 color = iPalette.eval(paletteCoord);
+    
+    return color;
+}

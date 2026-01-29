@@ -23,6 +23,9 @@ public class MauiVideo : IVideo, IDisposable
     private int _textureHeight;
     private readonly SKPaint _paint;
     private SKBitmap _texture;
+    private SKBitmap _indexedTexture;  // 8-bit indexed texture for GPU palette conversion
+    private SKBitmap _paletteTexture;  // 256x1 RGBA palette texture
+    private uint[] _currentPalette;    // Track current palette to avoid unnecessary updates
 
     public MauiVideo(
         Config config,
@@ -46,6 +49,12 @@ public class MauiVideo : IVideo, IDisposable
                 _textureHeight = 320;// silk had 512;
             }
             _texture = new SKBitmap(_textureWidth, _textureHeight, SKColorType.Rgba8888, SKAlphaType.Premul);
+
+            // Create indexed texture for GPU palette conversion (matches renderer.Screen dimensions, but transposed for Column-Major data)
+            _indexedTexture = new SKBitmap(renderer.Screen.Height, renderer.Screen.Width, SKColorType.Gray8, SKAlphaType.Opaque);
+            
+            // Create palette texture (256x1 RGBA)
+            _paletteTexture = new SKBitmap(256, 1, SKColorType.Rgba8888, SKAlphaType.Premul);
 
             textureData = new byte[4 * renderer.Width * renderer.Height];
 
@@ -163,10 +172,22 @@ public class MauiVideo : IVideo, IDisposable
         {
             CreateShader();
         }
-        _gpuBuilder.Children.Add("iImage1", new(_texture.ToShader()));
+        
+        // Create shader children with indexed texture and palette texture
+        // We need to recreate the builder each frame because Children can't be cleared
+        _gpuBuilder = new SKRuntimeShaderBuilder(_shader);
+        
+        // Create indexed texture shader with nearest-neighbor sampling (no filtering)
+        var indexedShader = _indexedTexture.ToShader(SKShaderTileMode.Clamp, SKShaderTileMode.Clamp);
+        
+        // Create palette texture shader with nearest-neighbor sampling and clamp mode
+        var paletteShader = _paletteTexture.ToShader(SKShaderTileMode.Clamp, SKShaderTileMode.Clamp);
+        
+        _gpuBuilder.Children.Add("iImage1", indexedShader);
+        _gpuBuilder.Children.Add("iPalette", paletteShader);
 
         SKSize iResolution = new(viewport.Width, viewport.Height);
-        SKSize iImageResolution = new(_texture.Width, _texture.Height);
+        SKSize iImageResolution = new(_indexedTexture.Width, _indexedTexture.Height);
 
         _gpuBuilder.Uniforms["iOffset"] = new[] { viewport.Left, viewport.Top };
         _gpuBuilder.Uniforms["iResolution"] = new[] { iResolution.Width, iResolution.Height };
@@ -213,7 +234,39 @@ public class MauiVideo : IVideo, IDisposable
             }
         }
 
-        WritePaletteDirectParallel(_texture, renderer.Screen.Data, colors);
+        // GPU path: Upload indexed data and palette to textures
+        UpdatePaletteTexture(colors);
+        
+        // Copy indexed screen data to indexed texture, handling potential row padding
+        CopyIndexedDataToTexture(renderer.Screen.Data, renderer.Screen.Height, renderer.Screen.Width);
+    }
+
+    private unsafe void CopyIndexedDataToTexture(byte[] screenData, int width, int height)
+    {
+        var info = _indexedTexture.Info;
+        int rowBytes = info.RowBytes;
+
+        IntPtr ptr = _indexedTexture.GetPixels();
+        if (ptr == IntPtr.Zero)
+            return;
+
+        byte* basePtr = (byte*)ptr;
+
+        // If there's no row padding, we can do a simple copy
+        if (rowBytes == width)
+        {
+            Marshal.Copy(screenData, 0, ptr, screenData.Length);
+        }
+        else
+        {
+            // Handle row padding - copy row by row
+            for (int y = 0; y < height; y++)
+            {
+                byte* rowPtr = basePtr + y * rowBytes;
+                int srcOffset = y * width;
+                Marshal.Copy(screenData, srcOffset, (IntPtr)rowPtr, width);
+            }
+        }
     }
 
     public void RenderWipeUnsafe(Doom doom)
@@ -245,7 +298,11 @@ public class MauiVideo : IVideo, IDisposable
 
         renderer.RenderMenu(doom);
 
-        WritePaletteDirectParallel(_texture, renderer.Screen.Data, renderer.palette[0]);
+        // GPU path: Upload indexed data and palette to textures
+        UpdatePaletteTexture(renderer.palette[0]);
+        
+        // Copy indexed screen data to indexed texture
+        CopyIndexedDataToTexture(renderer.Screen.Data, renderer.Screen.Height, renderer.Screen.Width);
     }
 
     public void Render(Doom doom, Fixed frameFrac)
@@ -332,10 +389,31 @@ public class MauiVideo : IVideo, IDisposable
 
     private void CreateShader()
     {
-        var sksl = SkSl.LoadFromResources(@"Shaders\blit.sksl");
-        _shader = SkSl.Compile(sksl, "blit");
+        var sksl = SkSl.LoadFromResources(@"Shaders\palette_convert.sksl");
+        _shader = SkSl.Compile(sksl, "palette_convert");
 
         _gpuBuilder = new SKRuntimeShaderBuilder(_shader);
+    }
+
+    private unsafe void UpdatePaletteTexture(uint[] palette)
+    {
+        // Only update if palette changed
+        if (_currentPalette != null && _currentPalette == palette)
+            return;
+
+        _currentPalette = palette;
+
+        IntPtr ptr = _paletteTexture.GetPixels();
+        if (ptr == IntPtr.Zero)
+            return;
+
+        uint* palettePtr = (uint*)ptr;
+        
+        // Copy 256 palette entries directly
+        for (int i = 0; i < 256; i++)
+        {
+            palettePtr[i] = palette[i];
+        }
     }
 
 
@@ -374,6 +452,10 @@ public class MauiVideo : IVideo, IDisposable
     {
         _texture?.Dispose();
         _texture = null;
+        _indexedTexture?.Dispose();
+        _indexedTexture = null;
+        _paletteTexture?.Dispose();
+        _paletteTexture = null;
         _paint?.Dispose();
     }
 
