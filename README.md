@@ -15,8 +15,7 @@ Uses a modified C# Doom engine from [ManagedDoom](https://github.com/sinshu/mana
 
 ## Whats New
 
-* Implemented SKSL shaders for palette conversions
-* Updated with latest nugets
+* Can launch on Android Auto by [thompsonnoahe](https://github.com/thompsonnoahe)
 
 ## How To Play
 
