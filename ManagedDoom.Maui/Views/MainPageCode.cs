@@ -42,9 +42,9 @@ public class MainPageCode : BaseCodePage
                     .Adapt((c) =>
                     {
                         _game = c;
-                    }),
+                    })
 #if DEBUG
-                new SkiaLabelFps()
+                , new SkiaLabelFps()
                 {
                     Margin = new(0, 0, 4, 24),
                     VerticalOptions = LayoutOptions.End,

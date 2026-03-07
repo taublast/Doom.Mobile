@@ -1,6 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
+	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round"
+				 android:supportsRtl="true" android:appCategory="game">	
+		<activity android:name="com.mauigame.doom.MainActivity" 
+				  android:exported="true"  
+				  android:theme="@style/Maui.SplashTheme"
+				  android:launchMode="singleTask"
+				  android:screenOrientation="landscape"
+				  android:configChanges="screenSize|orientation|uiMode|screenLayout|smallestScreenSize|density">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.CAR_LAUNCHER" />
+			</intent-filter>
+		</activity>
+	</application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-feature android:name="android.hardware.gamepad" android:required="false"/>
 </manifest>
